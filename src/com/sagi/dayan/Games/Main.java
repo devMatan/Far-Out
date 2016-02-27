@@ -28,7 +28,6 @@ public class Main   {
         frame.setVisible(true);
         frame.setBackground(Color.BLACK);
         System.out.println(WIDTH + "\t" + (HEIGHT));
-        System.out.println("=========================================");
     }
 
 
