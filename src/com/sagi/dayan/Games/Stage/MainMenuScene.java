@@ -31,7 +31,7 @@ public class MainMenuScene extends Scene {
         menuItem = 0;
         menuBox = new MenuBoxSprite(X_AXIS, axis[menuItem], stageWidth, stageHeight, 0, "menu.jpg", 0, 425, 110); //bImage is the background... not trivial
         try {
-            AudioPlayer.player.start(new AudioStream(Utils.getSoundResourceAsStream("intro.wav")));
+            AudioPlayer.player.start(new AudioStream(Utils.getSoundResourceAsStream("intro_LowQuality.wav")));
         } catch (IOException e) {
             e.printStackTrace();
         }

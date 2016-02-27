@@ -152,7 +152,7 @@ public class FirstStage extends Scene {
         }
         if(keys.get(engine.getP1Controlles()[GameEngine.FIRE]) ){
             if(players.get(0).isAbleToFire()){
-                missiles.add(new Missile(players.get(0).getCenterX() - 3, (int)players.get(0).getLocY(), players.get(0).getAcceleration() + 3, "P1Laser.png"));
+                missiles.add(new Missile(players.get(0).getCenterX() - 15, (int)players.get(0).getLocY(), players.get(0).getAcceleration() + 3, "P1Laser.png"));
                 players.get(0).updateFireTime();
             }
         }
@@ -181,7 +181,7 @@ public class FirstStage extends Scene {
             }
             if(keys.get(engine.getP2Controlles()[GameEngine.FIRE]) ){
                 if(players.get(1).isAbleToFire()){
-                    missiles.add(new Missile(players.get(1).getCenterX() - 3, (int)players.get(1).getLocY(), players.get(1).getAcceleration() + 3, "P1Laser.png"));
+                    missiles.add(new Missile(players.get(1).getCenterX() - 15, (int)players.get(1).getLocY(), players.get(1).getAcceleration() + 3, "P1Laser.png"));
                     players.get(1).updateFireTime();
                 }
             }
