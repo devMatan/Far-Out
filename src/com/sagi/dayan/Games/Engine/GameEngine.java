@@ -4,7 +4,6 @@ package com.sagi.dayan.Games.Engine;
  * Created by sagi on 2/8/16.
  */
 
-import com.sagi.dayan.Games.Elements.*;
 import com.sagi.dayan.Games.Stage.*;
 import com.sagi.dayan.Games.Utils.Utils;
 
@@ -36,6 +35,8 @@ public class GameEngine {
     private int[] p1Controlles = {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_K};
     private int[] p2Controlles = {KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_SHIFT};
 
+    private int p1Strikes, p2Strikes, p1CurrentStrikes, p2CurentStrikes;
+
     private Font gameFont;
 
     public GameEngine(int width, int height, Stage stage){
@@ -46,7 +47,7 @@ public class GameEngine {
         this.pHeight = height;
         this.scenes = new Vector<>();
         this.stage = stage;
-//        scenes.add(new FirstStage(width, height, 2)); // Need to be a menu Scene
+//        scenes.add(new Level(width, height, 2)); // Need to be a menu Scene
         scenes.add(new MainMenuScene(width, height, this));
         stage.addKeyListener(scenes.get(currentScene));
         stage.addMouseListener(scenes.get(currentScene));
@@ -127,7 +128,7 @@ public class GameEngine {
 
     public void startGame(int numOfPlayers){
         this.numOfPlayers = numOfPlayers;
-        scenes.add(new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-"));
+        scenes.add(new Level(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20}));
         changeScene(currentScene+1);
     }
 
@@ -160,4 +161,19 @@ public class GameEngine {
     public Font getGameFont() {
         return gameFont;
     }
+
+    public int getP1Strikes() {
+        return p1Strikes;
+    }
+    public int getP2Strikes() {
+        return p2Strikes;
+    }
+    public void setPlayerStrikes(int i, int strike) {
+        if (i == 0) {
+            p1Strikes += strike;
+        } else {
+            p2Strikes += strike;
+        }
+    }
+
 }

@@ -14,6 +14,7 @@ public abstract class Sprite {
     protected BufferedImage bImage;
     protected int imageWidth, imageHeight; // image dimensions
     protected URL imagePath;
+    protected String imageName;
     protected int locX, locY;
     protected int acceleration;
     protected int pWidth, pHeight;  // panel's dimensions
@@ -27,6 +28,7 @@ public abstract class Sprite {
 
     public Sprite(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight) {
         this.imagePath = getClass().getResource("/com/sagi/dayan/Games/Images/" + imgName);
+        this.imageName = imgName;
         this.sWidth = sWidth;
         this.sHeight = sHeight;
         locX = x;
@@ -165,7 +167,7 @@ public abstract class Sprite {
      * @return Rectangle
      */
     public Rectangle getBounds() {
-        return new Rectangle((int) locX, (int) locY, sWidth, sHeight);
+        return new Rectangle((int) locX, (int) locY, bImage.getWidth(), bImage.getHeight());
     }
 
     public boolean isScreenLoop() {
@@ -255,6 +257,14 @@ public abstract class Sprite {
         if(screenLoop) {
             outOfScreeFix();
             drawScreenLoopFix(g, p);
+        }
+    }
+
+    public boolean isOutOfScreen() {
+        if (this.getLocX() + this.sWidth < 0 || this.getLocX() - this.sWidth > pHeight || this.getLocY() + this.sHeight < 0 || this.getLocY() - sHeight > pHeight) {
+            return true;
+        } else {
+            return false;
         }
     }
 

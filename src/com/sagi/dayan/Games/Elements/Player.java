@@ -12,17 +12,18 @@ public class Player extends AnimatedSprite {
     private long lastFired;
 
 
-    public Player(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight, String imagePrefix) {
-        super(x, y, w, h, acc, imgName, angle, sWidth, sHeight);
+    public Player(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight, String imagePrefix, int numOfFirstFrames) {
+        super(x, y, w, h, acc, imgName, angle, sWidth, sHeight, numOfFirstFrames);
         this.imagePrefix = imagePrefix;
-        initFirstAnimation("");
+        initFirstAnimation("", numOfFirstFrames);
         this.ableToFire = true;
         fireDelay = 100;
         lastFired = System.currentTimeMillis();
+        setImageDimensions();
     }
 
     @Override
-    protected void initFirstAnimation(String spriteSheet) {
+    protected void initFirstAnimation(String spriteSheet, int numOfFirstFrames) {
         if(imagePrefix == null)
             return;
         System.out.println(imagePrefix);

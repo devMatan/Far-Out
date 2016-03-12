@@ -1,9 +1,7 @@
 package com.sagi.dayan.Games.Stage;
 
-import com.sagi.dayan.Games.Elements.Background;
-import com.sagi.dayan.Games.Elements.EnemyShip;
-import com.sagi.dayan.Games.Elements.Missile;
-import com.sagi.dayan.Games.Elements.Player;
+import com.sagi.dayan.Games.Elements.*;
+import com.sagi.dayan.Games.Engine.CollisionUtil;
 import com.sagi.dayan.Games.Engine.GameEngine;
 import com.sagi.dayan.Games.Utils.Utils;
 
@@ -20,28 +18,35 @@ import java.util.*;
 /**
  * Created by sagi on 2/20/16.
  */
-public class FirstStage extends Scene {
+public class Level extends Scene {
     protected Vector<Player> players;
     protected int p1Speed = 10;
-    protected Vector<Missile> missiles;
+    protected Vector<Missile> p1Missiles, p2Missiles, enemyMissiles;
     protected Background bg;
-    protected Timer enemyWaveT, enemyT;
-    protected Vector<EnemyShip> enemies;
+    protected int[] waveDelay;
+    protected int currentWave;
     protected int[] yAxisStartingAnimation;
     protected int startingAnimationIndex;
     protected boolean isStarted;
+    protected Vector<Wave> waves;
     protected int numOfPlayers;
     protected Map<Integer, Boolean> keys;
     protected String title;
     protected JLabel stageTitle;
+    protected long lastWaveTime;
 
 
 
-
-    public FirstStage(int width, int height, int numOfPlayers, GameEngine engine, String stageTitle){
+    public Level(int width, int height, int numOfPlayers, GameEngine engine, String stageTitle, int[] waveDelay){
         super(width, height, engine);
         players = new Vector<>();
-        missiles = new Vector<>();
+        p1Missiles = new Vector<>();
+        p2Missiles = new Vector<>();
+        enemyMissiles = new Vector<>();
+        this.waveDelay = waveDelay;
+        this.lastWaveTime = System.currentTimeMillis();
+        this.currentWave = 0;
+        this.waves = new Vector<>();
         isStarted = false;
         keys = new HashMap<>();
         yAxisStartingAnimation = new int[]{height + (5*GameEngine.PLAYER_HEIGHT) , height - (4*GameEngine.PLAYER_HEIGHT) , height - (GameEngine.PLAYER_HEIGHT + 15)};
@@ -52,19 +57,14 @@ public class FirstStage extends Scene {
         this.stageTitle = new JLabel(this.title);
 
         if(numOfPlayers == 1) {
-            players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2), yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1"));
+            players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2), yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1",6));
         }else{
-            players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) + GameEngine.PLAYER_WIDTH, yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1"));
-            players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) - GameEngine.PLAYER_WIDTH*3, yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P2"));
+            players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) + GameEngine.PLAYER_WIDTH, yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1", 6));
+            players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) - GameEngine.PLAYER_WIDTH*3, yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P2", 6));
 
         }
 
         setupKeys();
-        enemies = new Vector<>();
-        enemyWaveT = new Timer(10000, new enemyWaveLaunch());
-        enemyT = new Timer(10000, new enemyLaunch());
-        enemyWaveT.start();
-
         Utils.playSound("jetSound.wav");
     }
 
@@ -86,6 +86,15 @@ public class FirstStage extends Scene {
 
         bg.update();
         movePlayers();
+        Vector <Wave> wavesToRemove = new Vector<Wave>();
+
+        long now = System.currentTimeMillis();
+        if(currentWave < waveDelay.length && now - lastWaveTime >= waveDelay[currentWave] * 1000){
+            lastWaveTime = now;
+            System.out.println("New Wave!! Time: "+ now);
+            currentWave++;
+            waves.add(new Wave(5, new int[]{90,90,120, 120, 150, 150, 270, 270, 270} , 4, 1, 2, 4, "L1-ES1.png" , 500, 0, this, 1));
+        }
 
         if(startingAnimationIndex < 3 && !isStarted){
             if(startingAnimationIndex == 0){
@@ -110,22 +119,30 @@ public class FirstStage extends Scene {
                 }
             }
         }else{
-
             isStarted = true;
             for(int i = 0 ; i < players.size() ; i++){
                 players.get(i).update();
             }
 
-            for(int i = 0 ; i < missiles.size() ; i++){
-                missiles.get(i).update();
+            for(int i = 0 ; i < p1Missiles.size() ; i++){
+                p1Missiles.get(i).update();
+            }
+            for(int i = 0 ; i < p2Missiles.size() ; i++){
+                p2Missiles.get(i).update();
+            }
+            for(int i = 0 ; i < enemyMissiles.size() ; i++){
+                enemyMissiles.get(i).update();
             }
 
-            for(int i = 0 ; i < enemies.size() ; i++){
-                enemies.get(i).update();
+            for(int i = 0 ; i < waves.size() ; i++){
+                waves.get(i).update();
+                if(waves.get(i).isWaveOver()) {
+                    wavesToRemove.add(waves.get(i));
+                }
             }
+            waves.removeAll(wavesToRemove);
         }
-
-
+        checkCollision();
     }
 
     private void movePlayers() {
@@ -152,7 +169,7 @@ public class FirstStage extends Scene {
         }
         if(keys.get(engine.getP1Controlles()[GameEngine.FIRE]) ){
             if(players.get(0).isAbleToFire()){
-                missiles.add(new Missile(players.get(0).getCenterX() - 15, (int)players.get(0).getLocY(), players.get(0).getAcceleration() + 3, "P1Laser.png"));
+                p1Missiles.add(new Missile(players.get(0).getCenterX() - 15, (int)players.get(0).getLocY(), players.get(0).getAcceleration() + 3, "P1Laser.png", 4));
                 players.get(0).updateFireTime();
             }
         }
@@ -181,7 +198,7 @@ public class FirstStage extends Scene {
             }
             if(keys.get(engine.getP2Controlles()[GameEngine.FIRE]) ){
                 if(players.get(1).isAbleToFire()){
-                    missiles.add(new Missile(players.get(1).getCenterX() - 15, (int)players.get(1).getLocY(), players.get(1).getAcceleration() + 3, "P1Laser.png"));
+                    p2Missiles.add(new Missile(players.get(1).getCenterX() - 15, (int)players.get(1).getLocY(), players.get(1).getAcceleration() + 3, "P1Laser.png", 4));
                     players.get(1).updateFireTime();
                 }
             }
@@ -200,9 +217,9 @@ public class FirstStage extends Scene {
             if(f == null) {
                 f = g.getFont();
             }
-             f = f.deriveFont(60F);
-             g.setColor(Color.DARK_GRAY);
-             g.setFont(f);
+            f = f.deriveFont(60F);
+            g.setColor(Color.DARK_GRAY);
+            g.setFont(f);
 
 
             // Get the FontMetrics
@@ -216,16 +233,85 @@ public class FirstStage extends Scene {
         }
 
 
-        for(int i = 0 ; i < missiles.size() ; i++){
-            missiles.get(i).drawSprite(g,p);
+        for(int i = 0 ; i < p1Missiles.size() ; i++){
+            p1Missiles.get(i).drawSprite(g,p);
+        }
+        for(int i = 0 ; i < p2Missiles.size() ; i++){
+            p2Missiles.get(i).drawSprite(g,p);
+        }
+        for(int i = 0 ; i < enemyMissiles.size() ; i++){
+            enemyMissiles.get(i).drawSprite(g,p);
         }
         for(int i = 0 ; i < players.size() ; i++){
             players.get(i).drawSprite(g,p);
         }
-
-        for(int i = 0 ; i < enemies.size() ; i++){
-            enemies.get(i).drawSprite(g,p);
+        for(int i = 0 ; i < waves.size() ; i++){
+            waves.get(i).render(g,p);
         }
+
+    }
+
+    public void checkCollision() {
+        Vector<Missile> p1MTR, p2MTR, eMTR;
+        eMTR = new Vector<>();
+        p1MTR = new Vector<>();
+        p2MTR = new Vector<>();
+        for (int i = 0; i < players.size(); i++) {
+            for (int j = 0; j < enemyMissiles.size(); j++) {
+                if(CollisionUtil.collidesWith(players.get(i),enemyMissiles.get(j))){
+                    //Remove players Life
+                    eMTR.add(enemyMissiles.get(j));
+                    System.out.println("Hit Missile");
+                }
+            }
+            for (int j = 0; j < waves.size(); j++) {
+                // Ship hits enemy
+                for (int k = 0; k < waves.get(j).getEnemies().size(); k++) {
+                    if (CollisionUtil.collidesWith(waves.get(j).getEnemies().get(k), players.get(i))) {
+                        engine.setPlayerStrikes(i, -1);
+                        waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+                        System.out.println("PIN");
+                    }
+                }
+            }
+
+            if(i == 0){
+                for(int m = 0 ; m < p1Missiles.size() ; m++){
+                    for (int j = 0; j < waves.size(); j++) {
+                        // Ship hits enemy
+                        for (int k = 0; k < waves.get(j).getEnemies().size(); k++) {
+                            if (CollisionUtil.collidesWith(waves.get(j).getEnemies().get(k), p1Missiles.get(m))) {
+                                waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+                                p1MTR.add(p1Missiles.get(m));
+                            }
+                        }
+                    }
+                }
+            }else{
+                for(int m = 0 ; m < p2Missiles.size() ; m++){
+                    for (int j = 0; j < waves.size(); j++) {
+                        // Ship hits enemy
+                        for (int k = 0; k < waves.get(j).getEnemies().size(); k++) {
+                            if (CollisionUtil.collidesWith(waves.get(j).getEnemies().get(k), p2Missiles.get(m))) {
+                                waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+                                p2MTR.add(p2Missiles.get(m));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        p1Missiles.removeAll(p1MTR);
+        p2Missiles.removeAll(p2MTR);
+        enemyMissiles.removeAll(eMTR);
+
+    }
+
+    public void enemyFire(int x, int y, int acc) {
+        enemyMissiles.add(new Missile(x, y, acc,"E1-Fire.png", 15));
     }
 
     @Override
@@ -246,29 +332,5 @@ public class FirstStage extends Scene {
             keys.put(keyEvent.getKeyCode(), false);
     }
 
-    private class fireTimer implements ActionListener {
 
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            missiles.add(new Missile(((EnemyShip)actionEvent.getSource()).getCenterX(), (int)((EnemyShip)actionEvent.getSource()).getLocY(), ((EnemyShip)actionEvent.getSource()).getAcceleration() + 3, "P1Laser.png"));
-        }
-    }
-
-    private class enemyWaveLaunch implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-        }
-
-
-    }
-
-    private class enemyLaunch implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            enemies.add(new EnemyShip(0,0,0,0,3,"L1-ES1.png",0,15,15,new fireTimer()));
-        }
-
-    }
 }

@@ -91,7 +91,11 @@ public class Stage extends JPanel implements Runnable{
 
             if (System.currentTimeMillis() - lastTimer > 1000) {
                 lastTimer += 1000;
-                System.out.println("Ticks: " + ticks + "\tFps: " + frames + "\tScenes Size: " + engine.getScenesSize());
+                if(frames <= 35){
+                    System.err.println("Ticks: " + ticks + "\tFps: " + frames + "\tScenes Size: " + engine.getScenesSize());
+                }else{
+                    System.out.println("Ticks: " + ticks + "\tFps: " + frames + "\tScenes Size: " + engine.getScenesSize());
+                }
                 frames = 0;
                 ticks = 0;
             }

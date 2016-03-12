@@ -20,7 +20,7 @@ public class Main   {
     public static final int WIDTH = 1000, HEIGHT = 1000;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Game");
+        JFrame frame = new JFrame("Far Out - Cold Shit IV");
         frame.setSize(WIDTH, HEIGHT);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
