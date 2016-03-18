@@ -10,14 +10,15 @@ import java.awt.event.ActionListener;
  * Created by sagi on 2/20/16.
  */
 public class EnemyShip extends AnimatedSprite {
-    protected int fireDelay, stepDelay, currentStep;
+    protected int currentStep;
+    protected double stepDelay, fireDelay;
     protected long lastFireTime, lastStepTime;
     protected int[] moveVector;
     protected Wave wave;
     protected int hitsToDestroy;
     protected boolean isDone;
     protected long startExploded;
-    public EnemyShip(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight,int fireDelay, int stepDelay, Wave wave, int[] moveVector,int numOfFirstFrames, int hitsToDestroy) {
+    public EnemyShip(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight,double fireDelay, double stepDelay, Wave wave, int[] moveVector,int numOfFirstFrames, int hitsToDestroy) {
         super(x, y, w, h, acc, imgName, angle, sWidth, sHeight, numOfFirstFrames);
         this.fireDelay = fireDelay;
         this.stepDelay = stepDelay;

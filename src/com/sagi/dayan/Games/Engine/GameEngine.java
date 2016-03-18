@@ -6,6 +6,7 @@ package com.sagi.dayan.Games.Engine;
 
 import com.sagi.dayan.Games.Stage.*;
 import com.sagi.dayan.Games.Utils.Utils;
+import com.sagi.dayan.Games.Utils.WaveConfigs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +38,11 @@ public class GameEngine {
 
     private int p1Strikes, p2Strikes, p1CurrentStrikes, p2CurentStrikes;
 
+
+
     private Font gameFont;
+
+    private WaveConfigs waveConfigs;
 
     public GameEngine(int width, int height, Stage stage){
         this.currentScene = 0;
@@ -61,6 +66,7 @@ public class GameEngine {
             e.printStackTrace();
             gameFont = null;
         }
+        this.waveConfigs = new WaveConfigs();
         startNewGame();
     }
 
@@ -83,6 +89,9 @@ public class GameEngine {
 
     }
 
+    public WaveConfigs getWaveConfigs() {
+        return waveConfigs;
+    }
 
 
 
@@ -128,7 +137,7 @@ public class GameEngine {
 
     public void startGame(int numOfPlayers){
         this.numOfPlayers = numOfPlayers;
-        scenes.add(new Level(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20}));
+        scenes.add(new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20}));
         changeScene(currentScene+1);
     }
 

@@ -4,6 +4,8 @@ import com.sagi.dayan.Games.Elements.*;
 import com.sagi.dayan.Games.Engine.CollisionUtil;
 import com.sagi.dayan.Games.Engine.GameEngine;
 import com.sagi.dayan.Games.Utils.Utils;
+import com.sagi.dayan.Games.Utils.WaveConfig;
+import com.sagi.dayan.Games.Utils.WaveConfigs;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -18,7 +20,7 @@ import java.util.*;
 /**
  * Created by sagi on 2/20/16.
  */
-public class Level extends Scene {
+public abstract class Level extends Scene {
     protected Vector<Player> players;
     protected int p1Speed = 10;
     protected Vector<Missile> p1Missiles, p2Missiles, enemyMissiles;
@@ -83,17 +85,13 @@ public class Level extends Scene {
 
     @Override
     public void update() {
-
         bg.update();
         movePlayers();
         Vector <Wave> wavesToRemove = new Vector<Wave>();
 
         long now = System.currentTimeMillis();
         if(currentWave < waveDelay.length && now - lastWaveTime >= waveDelay[currentWave] * 1000){
-            lastWaveTime = now;
-            System.out.println("New Wave!! Time: "+ now);
-            currentWave++;
-            waves.add(new Wave(5, new int[]{90,90,120, 120, 150, 150, 270, 270, 270} , 4, 1, 2, 4, "L1-ES1.png" , 500, 0, this, 1));
+            launchWave(now);
         }
 
         if(startingAnimationIndex < 3 && !isStarted){
@@ -144,6 +142,8 @@ public class Level extends Scene {
         }
         checkCollision();
     }
+
+    protected abstract void launchWave(long time);
 
     private void movePlayers() {
         /**

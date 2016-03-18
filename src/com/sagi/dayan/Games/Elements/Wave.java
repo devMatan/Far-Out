@@ -13,7 +13,8 @@ import java.util.Vector;
 public class Wave {
 
     protected Level level;
-    protected  int enemyMaxAmount, currentAmount,fireDelay, launchDelay, stepDelay, acc, startX, startY;
+    protected  int enemyMaxAmount, currentAmount, acc, startX, startY;
+    protected double stepDelay,fireDelay, launchDelay;
     protected int[] moveVector;
     protected Vector<EnemyShip> enemies;
     protected Vector<Missile> bullets;
@@ -21,7 +22,7 @@ public class Wave {
     protected String imageName;
     protected int hitsToDestroy;
 
-    public Wave(int enemyMaxAmount, int[] moveVector, int fireDelay, int stepDelay, int launchDelay, int acc, String imageName, int startX, int startY, Level stage, int hitsToDestroy){
+    public Wave(int enemyMaxAmount, int[] moveVector, double fireDelay, double stepDelay, double launchDelay, int acc, String imageName, int startX, int startY, Level stage, int hitsToDestroy){
         this.enemies = new Vector<>();
         this.bullets = new Vector<>();
         this.enemyMaxAmount = enemyMaxAmount;
