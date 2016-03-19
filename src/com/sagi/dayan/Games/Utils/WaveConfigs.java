@@ -33,7 +33,7 @@ public class WaveConfigs  {
         configs.add(new WaveConfig(new int[]{270,270,240, 240, 210, 210, 90} , 0.5, 8,900 , 1000));
 		
 		//middle right to middle right
-		configs.add(new WaveConfig(new int[]{180,180,180,180,180,90, 90, 0} , 0.5, 8,1010 , 400));
+		configs.add(new WaveConfig(new int[]{180,180,180,180,180,90, 90, 0} , 0.5, 8,999 , 400));
 		
 		//middle left to middle left
 		configs.add(new WaveConfig(new int[]{0,0,0,0,0,90, 90, 180} , 0.5, 8,-10 , 400));

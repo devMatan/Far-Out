@@ -17,8 +17,6 @@ public abstract class AnimatedSprite extends Sprite {
     protected int currentAnimation;
 
 
-
-
     public AnimatedSprite(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight, int numOfFirstFrames) {
         super(x, y, w, h, acc, imgName, angle, sWidth, sHeight);
         animations = new Vector<>();
@@ -47,6 +45,10 @@ public abstract class AnimatedSprite extends Sprite {
     protected void drawScreenLoopFix(Graphics g, JPanel p) {
         bImage = animations.get(currentAnimation).getCurrentFrame();
         super.drawScreenLoopFix(g,p);
+    }
+    
+    public int getFrameNum(){
+    	return animations.get(currentAnimation).getFrameIndex();
     }
 
     public void setCurrentAnimation(int animation){

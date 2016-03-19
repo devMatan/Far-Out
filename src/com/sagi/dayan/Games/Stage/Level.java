@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.sagi.dayan.Games.Elements.Background;
+import com.sagi.dayan.Games.Elements.Blast;
 import com.sagi.dayan.Games.Elements.Missile;
 import com.sagi.dayan.Games.Elements.Player;
 import com.sagi.dayan.Games.Elements.Wave;
@@ -39,6 +40,7 @@ public abstract class Level extends Scene {
 	protected int startingAnimationIndex;
 	protected boolean isStarted;
 	protected Vector<Wave> waves;
+	protected Vector<Blast> blasts;
 	protected int numOfPlayers;
 	protected Map<Integer, Boolean> keys;
 	protected String title;
@@ -53,6 +55,7 @@ public abstract class Level extends Scene {
 		players = new Vector<>();
 		p1Missiles = new Vector<>();
 		p2Missiles = new Vector<>();
+		blasts = new Vector<Blast>();
 		enemyMissiles = new Vector<>();
 		this.waveDelay = waveDelay;
 		this.lastWaveTime = System.currentTimeMillis();
@@ -68,10 +71,13 @@ public abstract class Level extends Scene {
 		this.stageTitle = new JLabel(this.title);
 
 		if(numOfPlayers == 1) {
-			players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2), yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1",6));
+			players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2), yAxisStartingAnimation[startingAnimationIndex],
+					width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1",6));
 		}else{
-			players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) + GameEngine.PLAYER_WIDTH, yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1", 6));
-			players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) - GameEngine.PLAYER_WIDTH*3, yAxisStartingAnimation[startingAnimationIndex], width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P2", 6));
+			players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) + GameEngine.PLAYER_WIDTH, yAxisStartingAnimation[startingAnimationIndex],
+					width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P1", 6));
+			players.add(new Player((width / 2) + (GameEngine.PLAYER_WIDTH / 2) - GameEngine.PLAYER_WIDTH*3, yAxisStartingAnimation[startingAnimationIndex],
+					width, height, p1Speed, "emptyImage.png", 0, GameEngine.PLAYER_WIDTH, GameEngine.PLAYER_HEIGHT, "P2", 6));
 
 		}
 
@@ -99,6 +105,7 @@ public abstract class Level extends Scene {
 		bg.update();
 		movePlayers();
 		Vector <Wave> wavesToRemove = new Vector<>();
+		Vector<Blast> blastTRM = new Vector<>();
 
 		long now = System.currentTimeMillis();
 		//        if(currentWave < waveDelay.length && now - lastWaveTime >= waveDelay[currentWave] * 1000){
@@ -163,7 +170,17 @@ public abstract class Level extends Scene {
 			System.out.println("Done");
 			engine.changeLevel();
 		}
+		
+		
+		for(int i =0; i<blasts.size();i++){
+			if (blasts.get(i).isDone()){
+				System.out.println("removing blast");
+				blastTRM.add(blasts.get(i));
+			}
+			blasts.get(i).update();
+		}
 
+		blasts.removeAll(blastTRM);
 
 	}
 
@@ -181,75 +198,71 @@ public abstract class Level extends Scene {
 		/**
 		 * Player 1 Movement:
 		 */
-		 if(keys.get(engine.getP1Controlles()[GameEngine.UP]) ){ //UP
-			 players.get(0).sethDirection(1);
-		 }
-		 if(keys.get(engine.getP1Controlles()[GameEngine.DOWN])){ // DOWN
-			 players.get(0).sethDirection(-1);
-		 }
-		 if(!keys.get(engine.getP1Controlles()[GameEngine.UP]) && !keys.get(engine.getP1Controlles()[GameEngine.DOWN])){ // Not up Or Down
-			 players.get(0).sethDirection(0);
-		 }
-		 if(keys.get(engine.getP1Controlles()[GameEngine.LEFT])) { // Left
-			 players.get(0).setvDirection(-1);
-		 }
-		 if(keys.get(engine.getP1Controlles()[GameEngine.RIGHT])) { // Right
-			 players.get(0).setvDirection(1);
-		 }
-		 if(!keys.get(engine.getP1Controlles()[GameEngine.LEFT]) && !keys.get(engine.getP1Controlles()[GameEngine.RIGHT])){ // Not right or left
-			 players.get(0).setvDirection(0);
-		 }
-		 if(keys.get(engine.getP1Controlles()[GameEngine.FIRE]) ){
-			 if(players.get(0).isAbleToFire() && !players.get(0).isGameOver()){
-				 p1Missiles.add(new Missile(players.get(0).getCenterX() - 15, (int)players.get(0).getLocY(), players.get(0).getAcceleration() + 3, "P1Laser.png", 4));
-				 players.get(0).updateFireTime();
-			 }
-		 }
-        if(keys.get(engine.getP1Controlles()[GameEngine.USE_CREDIT]) && engine.getP1Health() <= 0 ){
-            if(engine.getCredits() > 0) {
-                engine.revivePlayer(0);
-                players.get(0).resetPlayer();
+		if(keys.get(engine.getP1Controlles()[GameEngine.UP]) ){ //UP
+			players.get(0).sethDirection(1);
+		}
+		if(keys.get(engine.getP1Controlles()[GameEngine.DOWN])){ // DOWN
+			players.get(0).sethDirection(-1);
+		}
+		if(!keys.get(engine.getP1Controlles()[GameEngine.UP]) && !keys.get(engine.getP1Controlles()[GameEngine.DOWN])){ // Not up Or Down
+			players.get(0).sethDirection(0);
+		}
+		if(keys.get(engine.getP1Controlles()[GameEngine.LEFT])) { // Left
+			players.get(0).setvDirection(-1);
+		}
+		if(keys.get(engine.getP1Controlles()[GameEngine.RIGHT])) { // Right
+			players.get(0).setvDirection(1);
+		}
+		if(!keys.get(engine.getP1Controlles()[GameEngine.LEFT]) && !keys.get(engine.getP1Controlles()[GameEngine.RIGHT])){ // Not right or left
+			players.get(0).setvDirection(0);
+		}
+		if(keys.get(engine.getP1Controlles()[GameEngine.FIRE]) ){
+			if(players.get(0).isAbleToFire() && !players.get(0).isGameOver()){
+				p1Missiles.add(new Missile(players.get(0).getCenterX() - 15, (int)players.get(0).getLocY(),getStageWidth(),getStageHeight(), players.get(0).getAcceleration() + 3, "P1Laser.png", 4));
+				players.get(0).updateFireTime();
+			}
+			if(engine.getP1Health() <= 0 && engine.getCredits() > 0) {
+				engine.revivePlayer(0);
+				players.get(0).resetPlayer();
 
-            }
-        }
+			}
+		}
 
-		 /**
-		  * Player 2 Movement
-		  */
-		 if(numOfPlayers > 1){
-			 if(keys.get(engine.getP2Controlles()[GameEngine.UP]) ){ //UP
-				 players.get(1).sethDirection(1);
-			 }
-			 if(keys.get(engine.getP2Controlles()[GameEngine.DOWN])){ // DOWN
-				 players.get(1).sethDirection(-1);
-			 }
-			 if(!keys.get(engine.getP2Controlles()[GameEngine.UP]) && !keys.get(engine.getP2Controlles()[GameEngine.DOWN])){ // Not up Or Down
-				 players.get(1).sethDirection(0);
-			 }
-			 if(keys.get(engine.getP2Controlles()[GameEngine.LEFT])) { // Left
-				 players.get(1).setvDirection(-1);
-			 }
-			 if(keys.get(engine.getP2Controlles()[GameEngine.RIGHT])) { // Right
-				 players.get(1).setvDirection(1);
-			 }
-			 if(!keys.get(engine.getP2Controlles()[GameEngine.LEFT]) && !keys.get(engine.getP2Controlles()[GameEngine.RIGHT])){ // Not right or left
-				 players.get(1).setvDirection(0);
-			 }
-			 if(keys.get(engine.getP2Controlles()[GameEngine.FIRE]) ){
-				 if(players.get(1).isAbleToFire() && !players.get(1).isGameOver()){
-					 p2Missiles.add(new Missile(players.get(1).getCenterX() - 15, (int)players.get(1).getLocY(), players.get(1).getAcceleration() + 3, "P1Laser.png", 4));
-					 players.get(1).updateFireTime();
-				 }
-			 }
-             if(keys.get(engine.getP2Controlles()[GameEngine.USE_CREDIT]) && engine.getP2Health() <= 0){
-                 if(engine.getCredits() > 0) {
-                     engine.revivePlayer(1);
-                     players.get(1).resetPlayer();
+		/**
+		 * Player 2 Movement
+		 */
+		if(numOfPlayers > 1){
+			if(keys.get(engine.getP2Controlles()[GameEngine.UP]) ){ //UP
+				players.get(1).sethDirection(1);
+			}
+			if(keys.get(engine.getP2Controlles()[GameEngine.DOWN])){ // DOWN
+				players.get(1).sethDirection(-1);
+			}
+			if(!keys.get(engine.getP2Controlles()[GameEngine.UP]) && !keys.get(engine.getP2Controlles()[GameEngine.DOWN])){ // Not up Or Down
+				players.get(1).sethDirection(0);
+			}
+			if(keys.get(engine.getP2Controlles()[GameEngine.LEFT])) { // Left
+				players.get(1).setvDirection(-1);
+			}
+			if(keys.get(engine.getP2Controlles()[GameEngine.RIGHT])) { // Right
+				players.get(1).setvDirection(1);
+			}
+			if(!keys.get(engine.getP2Controlles()[GameEngine.LEFT]) && !keys.get(engine.getP2Controlles()[GameEngine.RIGHT])){ // Not right or left
+				players.get(1).setvDirection(0);
+			}
+			if(keys.get(engine.getP2Controlles()[GameEngine.FIRE]) ){
+				if(players.get(1).isAbleToFire() && !players.get(1).isGameOver()){
+					p2Missiles.add(new Missile(players.get(1).getCenterX() - 15, (int)players.get(1).getLocY(),getStageWidth(),getStageHeight(),players.get(1).getAcceleration() + 3, "P1Laser.png", 4));
+					players.get(1).updateFireTime();
+				}
+				if(engine.getP2Health() <= 0 && engine.getCredits() > 0) {
+					engine.revivePlayer(1);
+					players.get(0).resetPlayer();
 
-                 }
-             }
+				}
+			}
 
-		 }
+		}
 	}
 
 	@Override
@@ -359,6 +372,10 @@ public abstract class Level extends Scene {
 		for(int i = 0 ; i < waves.size() ; i++){
 			waves.get(i).render(g,p);
 		}
+		
+		for(int i =0; i<blasts.size();i++){
+			blasts.get(i).drawSprite(g, p);
+		}
 
 	}
 
@@ -407,6 +424,25 @@ public abstract class Level extends Scene {
 		p1MTR = new Vector<>();
 		p2MTR = new Vector<>();
 
+		// remove missiles - out of screen
+		for( int i = 0; i < enemyMissiles.size(); i++) {
+			if (enemyMissiles.get(i).isOutOfScreen()) {
+				eMTR.add(enemyMissiles.get(i));
+			}
+		}
+		for( int i = 0; i < p1Missiles.size(); i++) {
+			if (p1Missiles.get(i).isOutOfScreen()) {
+				p1MTR.add(p1Missiles.get(i));
+			}
+		}
+		if (players.size() > 1) {
+			for( int i = 0; i < p2Missiles.size(); i++) {
+				if (p2Missiles.get(i).isOutOfScreen()) {
+					p2MTR.add(p2Missiles.get(i));
+				}
+			}
+		}
+
 		//for each player check collisions
 		for (int i = 0; i < players.size(); i++) {
 
@@ -416,8 +452,10 @@ public abstract class Level extends Scene {
 					playerHit(i);
 					if(playerIsAlive(i)) {
 						eMTR.add(enemyMissiles.get(j));
+					}else{
+						blasts.add(new Blast((int)players.get(i).getLocX(),(int)players.get(i).getLocY(),"explosion.png",15));
+					
 					}
-					System.out.println("Hit Missile");
 				}
 			}
 
@@ -431,6 +469,9 @@ public abstract class Level extends Scene {
 						}
 						if(playerIsAlive(i)) {
 							waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+						}else{
+							blasts.add(new Blast((int)players.get(i).getLocX(),(int)players.get(i).getLocY(),"explosion.png",15));
+						
 						}
 					}
 				}
@@ -506,7 +547,7 @@ public abstract class Level extends Scene {
 	}
 
 	public void enemyFire(int x, int y, int acc) {
-		enemyMissiles.add(new Missile(x, y, acc,"E1-Fire.png", 15));
+		enemyMissiles.add(new Missile(x, y,getStageWidth(),getStageHeight(), acc,"E1-Fire.png", 15));
 	}
 
 	@Override
