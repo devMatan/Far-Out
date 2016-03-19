@@ -34,7 +34,7 @@ public class GameEngine {
     private Scene scene;
     private int p1CreditTime, p2CreditTime, creditTickTime = 1;
     public static final int PLAYER_WIDTH = 120, PLAYER_HEIGHT = 120;
-    public static final int UP=0,RIGHT=1,DOWN=2, LEFT=3, FIRE=4, SPECIAL=5;
+    public static final int UP=0,RIGHT=1,DOWN=2, LEFT=3, FIRE=4, USE_CREDIT=5;
     public int p1HighScore, p2HighScore;
 
     private int[] p1Controlles = {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_K, KeyEvent.VK_J};

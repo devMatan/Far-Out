@@ -204,12 +204,14 @@ public abstract class Level extends Scene {
 				 p1Missiles.add(new Missile(players.get(0).getCenterX() - 15, (int)players.get(0).getLocY(), players.get(0).getAcceleration() + 3, "P1Laser.png", 4));
 				 players.get(0).updateFireTime();
 			 }
-			 if(engine.getP1Health() <= 0 && engine.getCredits() > 0) {
-				 engine.revivePlayer(0);
-				 players.get(0).resetPlayer();
-
-			 }
 		 }
+        if(keys.get(engine.getP1Controlles()[GameEngine.USE_CREDIT]) && engine.getP1Health() <= 0 ){
+            if(engine.getCredits() > 0) {
+                engine.revivePlayer(0);
+                players.get(0).resetPlayer();
+
+            }
+        }
 
 		 /**
 		  * Player 2 Movement
@@ -238,12 +240,14 @@ public abstract class Level extends Scene {
 					 p2Missiles.add(new Missile(players.get(1).getCenterX() - 15, (int)players.get(1).getLocY(), players.get(1).getAcceleration() + 3, "P1Laser.png", 4));
 					 players.get(1).updateFireTime();
 				 }
-				 if(engine.getP2Health() <= 0 && engine.getCredits() > 0) {
-					 engine.revivePlayer(1);
-					 players.get(0).resetPlayer();
-
-				 }
 			 }
+             if(keys.get(engine.getP2Controlles()[GameEngine.USE_CREDIT]) && engine.getP2Health() <= 0){
+                 if(engine.getCredits() > 0) {
+                     engine.revivePlayer(1);
+                     players.get(1).resetPlayer();
+
+                 }
+             }
 
 		 }
 	}
