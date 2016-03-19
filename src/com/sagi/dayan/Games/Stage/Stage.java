@@ -1,12 +1,11 @@
 package com.sagi.dayan.Games.Stage;
 
-import com.sagi.dayan.Games.Engine.GameEngine;
-import com.sagi.dayan.Games.Utils.Utils;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferStrategy;
+import java.awt.Graphics;
 import java.util.Vector;
+
+import javax.swing.JPanel;
+
+import com.sagi.dayan.Games.Engine.GameEngine;
 
 /**
  * Created by sagi on 2/8/16.

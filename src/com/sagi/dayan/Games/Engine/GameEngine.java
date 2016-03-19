@@ -4,21 +4,23 @@ package com.sagi.dayan.Games.Engine;
  * Created by sagi on 2/8/16.
  */
 
-import com.sagi.dayan.Games.Stage.*;
-import com.sagi.dayan.Games.Utils.Utils;
-import com.sagi.dayan.Games.Utils.WaveConfigs;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
-import java.util.Vector;
 
-/**
- * Created by sagi on 12/18/15.
- */
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import com.sagi.dayan.Games.Stage.*;
+import com.sagi.dayan.Games.Stage.MainMenuScene;
+import com.sagi.dayan.Games.Stage.Scene;
+import com.sagi.dayan.Games.Stage.SettingsMenuScene;
+import com.sagi.dayan.Games.Stage.Stage;
+import com.sagi.dayan.Games.Utils.Utils;
+import com.sagi.dayan.Games.Utils.WaveConfigs;
 
 
 
@@ -33,9 +35,10 @@ public class GameEngine {
     private int p1CreditTime, p2CreditTime, creditTickTime = 1;
     public static final int PLAYER_WIDTH = 120, PLAYER_HEIGHT = 120;
     public static final int UP=0,RIGHT=1,DOWN=2, LEFT=3, FIRE=4, SPECIAL=5;
+    public int p1HighScore, p2HighScore;
 
     private int[] p1Controlles = {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_K};
-    private int[] p2Controlles = {KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_SHIFT};
+    private int[] p2Controlles = {KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_Q};
 
     private int p1Lives, p2Lives, p1Health, p2Health, credits, p1Score, p2Score;
 
@@ -47,6 +50,7 @@ public class GameEngine {
     private int currentLevel;
 
     public GameEngine(int width, int height, Stage stage){
+    	p1HighScore =  p2HighScore = 0;
         this.isFirstGame = true;
         this.gameOver = true;
         this.pWidth = width;
@@ -78,16 +82,7 @@ public class GameEngine {
             p2Health = 100;
         }
     }
-    private void resetPlayer(int i){
-        resetPlayerHealth(i);
-
-        if (i==0){
-            p1Lives = 3;
-        }
-        else{
-            p2Lives = 3;
-        }
-    }
+ 
 
 
 
@@ -171,15 +166,22 @@ public class GameEngine {
     }
 
     public void changeLevel(){
+    	System.out.println("current level: "+currentLevel);
         currentLevel++;
         stage.removeMouseListener(scene);
         stage.removeKeyListener(scene);
         switch (currentLevel){
             case 0:
-                scene = new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20});
+                scene = new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 1,1,1});
                 break;
             case 1:
-                scene = new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.1 =-", new int[]{5, 20});
+                scene = new SecondStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 2.0 =-", new int[]{5, 5,5,5});
+                break;
+            case 2:
+                scene = new ThirdStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 3.0 =-", new int[]{5, 0,0,8});
+                break;
+            case 3:
+                scene = new FourthStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 4.0 =-", new int[]{5, 0,0,8});
                 break;
 
         }
@@ -238,6 +240,22 @@ public class GameEngine {
     public void useCredit(){
         credits--;
     }
+    
+    public void revivePlayer(int i)
+    {
+		useCredit();
+
+    	if(i==0){
+    		p1Health=100;
+			p1Lives =3;
+    	}
+    	else{
+    		p2Health=100;
+			p2Lives =3;
+    	}
+
+    }
+    
 
     public void setScore(int i, int score)
     {
@@ -255,7 +273,7 @@ public class GameEngine {
                 if(p1Lives > 0)
                     resetPlayerHealth(i);
                 if(p1Lives <= 0){
-                    p1CreditTime = 10;
+                	p1CreditTime = 10;
                     lastP1CreditTick = System.currentTimeMillis();
                 }
             }
@@ -289,4 +307,26 @@ public class GameEngine {
         }
 
     }
+
+
+	public int getP1HighScore() {
+		return p1HighScore;
+	}
+
+
+	public void setP1HighScore(int p1HighScore) {
+		this.p1HighScore = p1HighScore;
+	}
+
+
+	public int getP2HighScore() {
+		return p2HighScore;
+	}
+
+
+	public void setP2HighScore(int p2HighScore) {
+		this.p2HighScore = p2HighScore;
+	}
+    
+    
 }

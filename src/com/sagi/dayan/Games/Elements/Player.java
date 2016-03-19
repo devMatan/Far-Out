@@ -1,7 +1,8 @@
 package com.sagi.dayan.Games.Elements;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+
+import javax.swing.JPanel;
 
 /**
  * Created by sagi on 2/20/16.
@@ -52,7 +53,7 @@ public class Player extends AnimatedSprite {
         lastDrawn = System.currentTimeMillis();
         created = lastDrawn;
     }
-
+    
     @Override
     protected void initFirstAnimation(String spriteSheet, int numOfFirstFrames) {
         if(imagePrefix == null)

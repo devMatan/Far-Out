@@ -1,16 +1,20 @@
 package com.sagi.dayan.Games.Stage;
 
-import com.sagi.dayan.Games.Elements.MenuBoxSprite;
-import com.sagi.dayan.Games.Engine.GameEngine;
-import com.sagi.dayan.Games.Utils.Utils;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.swing.JPanel;
+
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import com.sagi.dayan.Games.Elements.MenuBoxSprite;
+import com.sagi.dayan.Games.Engine.GameEngine;
+import com.sagi.dayan.Games.Utils.Utils;
 
 /**
  * Created by sagi on 2/24/16.
@@ -51,6 +55,15 @@ public class MainMenuScene extends Scene {
         Graphics g = sceneImage.getGraphics();
         g.drawImage(menuBox.getbImage(), 0, 0, p);
         menuBox.drawSprite(g, p);
+        
+        Font f = engine.getGameFont();
+        f = f.deriveFont(25F);
+        g.setFont(f);
+        g.drawString("Player1 record: " +engine.p1HighScore, 700, 50);
+        g.drawString("Player2 record: " +engine.p2HighScore, 700, 100);
+        
+        
+
     }
 
     @Override

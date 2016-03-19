@@ -1,9 +1,5 @@
 package com.sagi.dayan.Games.Elements;
 
-import javax.swing.*;
-import javax.swing.border.MatteBorder;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
 /**

@@ -7,11 +7,11 @@ package com.sagi.dayan.Games.Engine;
  * Created by sagi on 12/19/15.
  */
 
+import java.awt.Rectangle;
+import java.awt.image.PixelGrabber;
+
 import com.sagi.dayan.Games.Elements.AnimatedSprite;
 import com.sagi.dayan.Games.Elements.Sprite;
-
-import java.awt.*;
-import java.awt.image.PixelGrabber;
 public  class CollisionUtil {
 
     /**

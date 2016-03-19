@@ -8,11 +8,11 @@ import com.sagi.dayan.Games.Utils.WaveConfigs;
 /**
  * Created by sagi on 3/19/16.
  */
-public class FirstStage extends Level{
+public class SecondStage extends Level{
 	
 	protected final int NUM_OF_WAVES = 4;
 
-    public FirstStage(int width, int height, int numOfPlayers, GameEngine engine, String stageTitle, int[] waveDelay) {
+    public SecondStage(int width, int height, int numOfPlayers, GameEngine engine, String stageTitle, int[] waveDelay) {
         super(width, height, numOfPlayers, engine, stageTitle, waveDelay);
         numOfWaves = NUM_OF_WAVES;
     }
@@ -27,28 +27,28 @@ public class FirstStage extends Level{
         switch (currentWave){
             case 0:
                 numOfEnemies = 5;
-                fireDelay = 0.1;
+                fireDelay = 0.5;
                 launchDelay = 0.5;
                 numOfHits = 1;
                 wc = engine.getWaveConfigs().getWaveConfig(6);
                 break;
             case 1:
                 numOfEnemies = 5;
-                fireDelay = 1;
+                fireDelay = 0.3;
                 launchDelay = 1;
                 numOfHits = 2;
                 wc = engine.getWaveConfigs().getWaveConfig(3);
                 break;
             case 2:
                 numOfEnemies = 10;
-                fireDelay = 0.8;
+                fireDelay = 0.3;
                 launchDelay = 1;
                 numOfHits = 3;
                 wc = engine.getWaveConfigs().getWaveConfig(2);
                 break;
             case 3:
                 numOfEnemies = 15;
-                fireDelay = 1.5;
+                fireDelay = 0.2;
                 launchDelay = 1;
                 numOfHits = 5;
                 wc = engine.getWaveConfigs().getWaveConfig(7);
