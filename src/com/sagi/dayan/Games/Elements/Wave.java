@@ -1,11 +1,11 @@
 package com.sagi.dayan.Games.Elements;
 
-import com.sagi.dayan.Games.Stage.Level;
-import com.sagi.dayan.Games.Stage.Scene;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
 import java.util.Vector;
+
+import javax.swing.JPanel;
+
+import com.sagi.dayan.Games.Stage.Level;
 
 /**
  * Created by sagi on 3/11/16.
@@ -52,6 +52,7 @@ public class Wave {
         for (int i = 0; i < enemies.size() ; i++){
             enemies.get(i).update();
             if (enemies.get(i).isDone()  || enemies.get(i).isOutOfScreen()) {
+
                 enemiesToRemove.add(enemies.get(i));
             }
         }
@@ -72,7 +73,8 @@ public class Wave {
     }
 
     public void fireFromEnemy(EnemyShip e){
-        level.enemyFire(e.getCenterX(), (int)(e.getLocY() + e.getsHeight()), -(e.getAcceleration() + 2));
+    	if(!e.isDead())
+    		level.enemyFire(e.getCenterX(), (int)(e.getLocY() + e.getsHeight()), -(e.getAcceleration() + 2));
     }
 
     public Vector <EnemyShip> getEnemies() {
@@ -83,6 +85,6 @@ public class Wave {
         es.gotHit();
     }
     public boolean isWaveOver() {
-        return enemies.size() == 0 && currentAmount == enemyMaxAmount;
+        return enemies.size() == 0 && currentAmount >= enemyMaxAmount;
     }
 }
