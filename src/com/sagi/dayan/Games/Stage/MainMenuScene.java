@@ -29,9 +29,9 @@ public class MainMenuScene extends Scene {
     public MainMenuScene(int stageWidth, int stageHeight, GameEngine engine) {
         super(stageWidth, stageHeight, engine);
         menuItem = 0;
-        menuBox = new MenuBoxSprite(X_AXIS, axis[menuItem], stageWidth, stageHeight, 0, "menu.jpg", 0, 425, 110); //bImage is the background... not trivial
+        menuBox = new MenuBoxSprite(X_AXIS, axis[menuItem], stageWidth, stageHeight, 0, "menu.jpg", 0, 425, 110, 15); //bImage is the background... not trivial
         try {
-            AudioPlayer.player.start(new AudioStream(Utils.getSoundResourceAsStream("intro.wav")));
+            AudioPlayer.player.start(new AudioStream(Utils.getSoundResourceAsStream("intro_LowQuality.wav")));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -15,6 +15,14 @@ import java.awt.image.BufferedImage;
 
 public abstract class Scene extends MouseAdapter implements KeyListener{
 
+    public int getStageWidth() {
+        return stageWidth;
+    }
+
+    public int getStageHeight() {
+        return stageHeight;
+    }
+
     protected int stageWidth, stageHeight;
     protected BufferedImage sceneImage;
     protected GameEngine engine;
@@ -32,5 +40,7 @@ public abstract class Scene extends MouseAdapter implements KeyListener{
     public BufferedImage getSceneImage () {
         return sceneImage;
     }
+
+
 
 }

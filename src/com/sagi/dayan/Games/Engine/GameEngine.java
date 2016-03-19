@@ -4,9 +4,9 @@ package com.sagi.dayan.Games.Engine;
  * Created by sagi on 2/8/16.
  */
 
-import com.sagi.dayan.Games.Elements.*;
 import com.sagi.dayan.Games.Stage.*;
 import com.sagi.dayan.Games.Utils.Utils;
+import com.sagi.dayan.Games.Utils.WaveConfigs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +36,13 @@ public class GameEngine {
     private int[] p1Controlles = {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_K};
     private int[] p2Controlles = {KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_SHIFT};
 
+    private int p1Lives, p2Lives, p1Health, p2Health, credits, p1Score, p2Score;
+
+
+
     private Font gameFont;
+
+    private WaveConfigs waveConfigs;
 
     public GameEngine(int width, int height, Stage stage){
         this.currentScene = 0;
@@ -46,7 +52,7 @@ public class GameEngine {
         this.pHeight = height;
         this.scenes = new Vector<>();
         this.stage = stage;
-//        scenes.add(new FirstStage(width, height, 2)); // Need to be a menu Scene
+//        scenes.add(new Level(width, height, 2)); // Need to be a menu Scene
         scenes.add(new MainMenuScene(width, height, this));
         stage.addKeyListener(scenes.get(currentScene));
         stage.addMouseListener(scenes.get(currentScene));
@@ -60,9 +66,32 @@ public class GameEngine {
             e.printStackTrace();
             gameFont = null;
         }
+        this.waveConfigs = new WaveConfigs();
         startNewGame();
+        resetPlayerHealth(0);
+        resetPlayerHealth(1);
+        credits = 3;
     }
 
+
+    private void resetPlayerHealth(int i){
+        if (i==0){
+            p1Health = 100;
+        }
+        else{
+            p2Health = 100;
+        }
+    }
+    private void resetPlayer(int i){
+        resetPlayerHealth(i);
+
+        if (i==0){
+            p1Lives = 3;
+        }
+        else{
+            p2Lives = 3;
+        }
+    }
 
 
     /**
@@ -82,6 +111,9 @@ public class GameEngine {
 
     }
 
+    public WaveConfigs getWaveConfigs() {
+        return waveConfigs;
+    }
 
 
 
@@ -127,7 +159,7 @@ public class GameEngine {
 
     public void startGame(int numOfPlayers){
         this.numOfPlayers = numOfPlayers;
-        scenes.add(new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-"));
+        scenes.add(new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20}));
         changeScene(currentScene+1);
     }
 
@@ -160,4 +192,51 @@ public class GameEngine {
     public Font getGameFont() {
         return gameFont;
     }
+
+    public int getP1Lives() {
+        return p1Lives;
+    }
+    public int getP2Lives() {
+        return p2Lives;
+    }
+
+    public int getP1Health() {
+        return p1Health;
+    }
+
+    public int getP2Health() {
+        return p2Health;
+    }
+
+    public int getP1Score() {
+        return p1Score;
+    }
+
+    public int getP2Score() {
+        return p2Score;
+    }
+
+    public int getCredits() {return credits;}
+
+
+    public void useCredit(){
+        credits--;
+    }
+
+    public void setScore(int i, int score)
+    {
+        if (i == 0) {
+            p1Score += score;
+        } else {
+            p2Score += score;
+        }
+    }
+    public void setPlayerHealth(int i, int strike) {
+        if (i == 0) {
+            p1Health += strike;
+        } else {
+            p2Health += strike;
+        }
+    }
+
 }

@@ -7,6 +7,7 @@ package com.sagi.dayan.Games.Engine;
  * Created by sagi on 12/19/15.
  */
 
+import com.sagi.dayan.Games.Elements.AnimatedSprite;
 import com.sagi.dayan.Games.Elements.Sprite;
 
 import java.awt.*;
@@ -78,8 +79,8 @@ public  class CollisionUtil {
         int[] pixels2 = new int[width*height];
 
         //Create the pixelgrabber and fill the arrays
-        PixelGrabber pg1 = new PixelGrabber(sprite1.getbImage(), cornerTopX-(int)sprite1.getLocX(), cornerTopY-(int)sprite1.getLocY(), width, height, pixels1, 0, width);
-        PixelGrabber pg2 = new PixelGrabber(sprite2.getbImage(), cornerTopX-(int)sprite2.getLocX(), cornerTopY-(int)sprite2.getLocY(), width, height, pixels2, 0, width);
+        PixelGrabber pg1 = new PixelGrabber(((AnimatedSprite)sprite1).getImageFrame(), cornerTopX-(int)sprite1.getLocX(), cornerTopY-(int)sprite1.getLocY(), width, height, pixels1, 0, width);
+        PixelGrabber pg2 = new PixelGrabber(((AnimatedSprite)sprite2).getImageFrame(), cornerTopX-(int)sprite2.getLocX(), cornerTopY-(int)sprite2.getLocY(), width, height, pixels2, 0, width);
 
         //Grab the pixels
         try {

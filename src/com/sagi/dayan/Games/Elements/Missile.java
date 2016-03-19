@@ -6,13 +6,14 @@ package com.sagi.dayan.Games.Elements;
 public class Missile extends AnimatedSprite {
 
 
-    public Missile(int x, int y, int acc, String imgName) {
-        super(x, y, 0, 0, acc, imgName, 0, 15, 15);
+    public Missile(int x, int y, int acc, String imgName, int numOfFrames) {
+        super(x, y, 0, 0, acc, imgName, 0, 15, 15, numOfFrames);
+
     }
 
     @Override
-    protected void initFirstAnimation(String spriteSheet) {
-        animations.add(new Animation("P1Laser.png", 4, 500));
+    protected void initFirstAnimation(String spriteSheet, int numOfFirstFrames) {
+        animations.add(new Animation(imageName, numOfFirstFrames, 500));
     }
 
     @Override

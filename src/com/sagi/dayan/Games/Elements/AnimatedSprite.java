@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -17,15 +18,17 @@ public abstract class AnimatedSprite extends Sprite {
     protected int currentAnimation;
 
 
-    public AnimatedSprite(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight) {
+
+
+    public AnimatedSprite(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight, int numOfFirstFrames) {
         super(x, y, w, h, acc, imgName, angle, sWidth, sHeight);
         animations = new Vector<>();
-        initFirstAnimation(imgName);
+        initFirstAnimation(imgName, numOfFirstFrames);
         currentAnimation = 0;
 
     }
 
-    protected abstract void initFirstAnimation(String spriteSheet);
+    protected abstract void initFirstAnimation(String spriteSheet, int numOfFirstFrames);
 
     @Override
     public void drawSprite(Graphics g, JPanel p) {
@@ -57,6 +60,9 @@ public abstract class AnimatedSprite extends Sprite {
         }
     }
 
+    public BufferedImage getImageFrame() {
+        return animations.get(currentAnimation).getCurrentFrame();
+    }
 
 
     protected class Animation {
@@ -82,6 +88,8 @@ public abstract class AnimatedSprite extends Sprite {
             }
             int frameHeight = spriteSheet.getHeight();
             int frameWidth = spriteSheet.getWidth() / numOfFrames;
+            sWidth = frameWidth;
+            sHeight = frameHeight;
             int currentX = 0;
             for(int i = 0 ; i < numOfFrames ; i++) {
                 addFrame(spriteSheet.getSubimage(currentX, 0, frameWidth, frameHeight), (double)totalAnimationTime/numOfFrames);

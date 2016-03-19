@@ -1,34 +1,49 @@
 package com.sagi.dayan.Games.Elements;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * Created by sagi on 2/20/16.
  */
 public class Player extends AnimatedSprite {
-    private final int NORMAL_ANIMATION = 0, RIGHT_ANIMATION = 1, LEFT_ANIMATION = 2, PADDING_BOTTOM = 35;
+    private final int NORMAL_ANIMATION = 0, RIGHT_ANIMATION = 1, LEFT_ANIMATION = 2, PADDING_BOTTOM = 35, MORTAL_DELAY = 3;
     private int hDirection = 0, vDirection = 0;
     private String imagePrefix;
-    private boolean ableToFire;
+    private boolean ableToFire, isMortal, toDraw;
     private int fireDelay;
-    private long lastFired;
+    private double imortalPulse = 0.2;
+    private long lastFired, lastDrawn, created;
 
 
-    public Player(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight, String imagePrefix) {
-        super(x, y, w, h, acc, imgName, angle, sWidth, sHeight);
+
+
+    public Player(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight, String imagePrefix, int numOfFirstFrames) {
+        super(x, y, w, h, acc, imgName, angle, sWidth, sHeight, numOfFirstFrames);
         this.imagePrefix = imagePrefix;
-        initFirstAnimation("");
+        initFirstAnimation("", numOfFirstFrames);
         this.ableToFire = true;
-        fireDelay = 100;
+        fireDelay = 200;
         lastFired = System.currentTimeMillis();
+        lastDrawn = lastFired;
+        created = lastDrawn;
+        setImageDimensions();
+        isMortal = false;
+        toDraw = true;
     }
 
     @Override
-    protected void initFirstAnimation(String spriteSheet) {
+    protected void initFirstAnimation(String spriteSheet, int numOfFirstFrames) {
         if(imagePrefix == null)
             return;
         System.out.println(imagePrefix);
         animations.add(new Animation(imagePrefix+"StraighSheet.png", 7, 200));
         animations.add(new Animation(imagePrefix+"RightSheet.png", 7, 200));
         animations.add(new Animation(imagePrefix+"LeftSheet.png", 7, 200));
+    }
+
+    public boolean isMortal() {
+        return isMortal;
     }
 
     @Override
@@ -69,6 +84,7 @@ public class Player extends AnimatedSprite {
         }
     }
 
+
     public boolean isAbleToFire() {
         return ableToFire;
     }
@@ -87,5 +103,24 @@ public class Player extends AnimatedSprite {
 
     public void updateFireTime(){
         lastFired = System.currentTimeMillis();
+    }
+
+    @Override
+    public void drawSprite(Graphics g, JPanel p){
+        long now = System.currentTimeMillis();
+        if(isMortal){
+            super.drawSprite(g, p);
+        }else{
+            if(now - lastDrawn >= imortalPulse * 1000){
+                toDraw = !toDraw;
+                lastDrawn = now;
+                if(now-created >= MORTAL_DELAY * 1000){
+                    isMortal = true;
+                }
+            }
+            if(toDraw) {
+                super.drawSprite(g, p);
+            }
+        }
     }
 }
