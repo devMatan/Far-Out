@@ -21,6 +21,8 @@ import java.util.*;
  * Created by sagi on 2/20/16.
  */
 public abstract class Level extends Scene {
+    protected final double PRESS_START_PULE = 0.3;
+    protected boolean toDrawStart;
     protected Vector<Player> players;
     protected int p1Speed = 10;
     protected Vector<Missile> p1Missiles, p2Missiles, enemyMissiles;
@@ -35,7 +37,7 @@ public abstract class Level extends Scene {
     protected Map<Integer, Boolean> keys;
     protected String title;
     protected JLabel stageTitle;
-    protected long lastWaveTime;
+    protected long lastWaveTime, lastPulseTime;
 
 
 
@@ -68,6 +70,8 @@ public abstract class Level extends Scene {
 
         setupKeys();
         Utils.playSound("jetSound.wav");
+        lastPulseTime = System.currentTimeMillis();
+        toDrawStart = true;
     }
 
     private void setupKeys() {
@@ -87,7 +91,7 @@ public abstract class Level extends Scene {
     public void update() {
         bg.update();
         movePlayers();
-        Vector <Wave> wavesToRemove = new Vector<Wave>();
+        Vector <Wave> wavesToRemove = new Vector<>();
 
         long now = System.currentTimeMillis();
         if(currentWave < waveDelay.length && now - lastWaveTime >= waveDelay[currentWave] * 1000){
@@ -101,7 +105,6 @@ public abstract class Level extends Scene {
             if(players.get(0).getLocY() > yAxisStartingAnimation[startingAnimationIndex] && startingAnimationIndex == 1){
                 for(int i = 0 ; i < players.size() ; i++){
                     players.get(i).setLocY((int)players.get(i).getLocY() - (p1Speed));
-//                    players.get(i).update();
                 }
                 if(players.get(0).getLocY() <= yAxisStartingAnimation[startingAnimationIndex]){
                     startingAnimationIndex++;
@@ -110,7 +113,6 @@ public abstract class Level extends Scene {
 
                 for(int i = 0 ; i < players.size() ; i++){
                     players.get(i).setLocY((int)players.get(i).getLocY() + (p1Speed - 5));
-//                    players.get(i).update();
                 }
                 if(players.get(0).getLocY() >= yAxisStartingAnimation[startingAnimationIndex]){
                     startingAnimationIndex++;
@@ -141,9 +143,18 @@ public abstract class Level extends Scene {
             waves.removeAll(wavesToRemove);
         }
         checkCollision();
+        engine.setGameOver(isGameOver());
     }
 
     protected abstract void launchWave(long time);
+
+    private boolean isGameOver(){
+        if(numOfPlayers == 1) {
+            return players.get(0).isGameOver();
+        }else{
+            return players.get(0).isGameOver() && players.get(1).isGameOver();
+        }
+    }
 
     private void movePlayers() {
         /**
@@ -240,8 +251,6 @@ public abstract class Level extends Scene {
 
         //print life bar
         for(int i=0; i<players.size(); i++){
-            g.setColor(Color.WHITE);
-            g.drawString("Player "+ (i+1) +" - Lives: " + ((i == 0) ? engine.getP1Lives() : engine.getP2Lives())+ ", Score: " + ((i == 0) ? engine.getP1Score() : engine.getP2Score()), 15, 35*(i+1));
 
             g.drawRect(15,35*(i+1)+10,100,10);
             g.setColor(Color.GREEN);
@@ -273,12 +282,74 @@ public abstract class Level extends Scene {
             enemyMissiles.get(i).drawSprite(g,p);
         }
         for(int i = 0 ; i < players.size() ; i++){
-            players.get(i).drawSprite(g,p);
+            if(i == 0){
+                if(engine.getP1Health() > 0){
+                    players.get(i).drawSprite(g,p);
+                    g.setColor(Color.WHITE);
+                    g.drawString("Player "+ (i+1) +" - Lives: " + ((i == 0) ? engine.getP1Lives() : engine.getP2Lives())+ ", Score: " + ((i == 0) ? engine.getP1Score() : engine.getP2Score()), 15, 35*(i+1));
+                }else{
+                    if(players.get(i).isGameOver()){
+                        renderGameOver(g, p, i);
+                    }else{
+                        renderPressStart(g, p, i);
+                    }
+                }
+            }else{
+                if(engine.getP2Health() > 0){
+                    players.get(i).drawSprite(g,p);
+                    g.setColor(Color.WHITE);
+                    g.drawString("Player "+ (i+1) +" - Lives: " + ((i == 0) ? engine.getP1Lives() : engine.getP2Lives())+ ", Score: " + ((i == 0) ? engine.getP1Score() : engine.getP2Score()), 15, 35*(i+1));
+                }else{
+                    if(players.get(i).isGameOver()){
+                        renderGameOver(g, p, i);
+                    }else{
+                        renderPressStart(g, p, i);
+                    }
+                }
+            }
         }
         for(int i = 0 ; i < waves.size() ; i++){
             waves.get(i).render(g,p);
         }
 
+    }
+
+    protected void renderPressStart(Graphics g, JPanel p, int i){
+        long now = System.currentTimeMillis();
+        if(now - lastPulseTime >= PRESS_START_PULE * 1000){
+            toDrawStart = !toDrawStart;
+            lastPulseTime = now;
+        }
+        if(i == 0){
+            g.drawString(engine.getP1CreditTime()+"", 15, 35 * (i + 1));
+            if(engine.getP1CreditTime() <= 0){
+                players.get(i).setGameOver(true);
+            }
+        }else{
+            g.drawString(engine.getP2CreditTime()+"", 15, 35 * (i + 1));
+            if(engine.getP2CreditTime() <= 0){
+                players.get(i).setGameOver(true);
+            }
+
+        }
+        if(toDrawStart) {
+                g.drawString("PRESS START", 45, 35 * (i + 1));
+
+        }
+        players.get(i).setLocY(-500);
+        players.get(i).setLocX(-500);
+    }
+
+    protected void renderGameOver(Graphics g, JPanel p, int i){
+        long now = System.currentTimeMillis();
+        players.get(i).setGameOver(true);
+        if(now - lastPulseTime >= PRESS_START_PULE * 1000){
+            toDrawStart = !toDrawStart;
+            lastPulseTime = now;
+        }
+        if(toDrawStart) {
+            g.drawString("P" + (i+1) + " GAME OVER", 15, 35 * (i + 1));
+        }
     }
 
     public void checkCollision() {
@@ -293,9 +364,10 @@ public abstract class Level extends Scene {
             //player vs. enemy missile
             for (int j = 0; j < enemyMissiles.size(); j++) {
                 if(CollisionUtil.collidesWith(players.get(i),enemyMissiles.get(j))){
-                    if(players.get(i).isMortal())
-                        engine.setPlayerHealth(i, -10);
-                    eMTR.add(enemyMissiles.get(j));
+                    playerHit(i);
+                    if(playerIsAlive(i)) {
+                        eMTR.add(enemyMissiles.get(j));
+                    }
                     System.out.println("Hit Missile");
                 }
             }
@@ -305,9 +377,12 @@ public abstract class Level extends Scene {
                 // Ship hits enemy
                 for (int k = 0; k < waves.get(j).getEnemies().size(); k++) {
                     if (CollisionUtil.collidesWith(waves.get(j).getEnemies().get(k), players.get(i))) {
-                        if(players.get(i).isMortal())
-                            engine.setPlayerHealth(i, -10);
-                        waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+                        if(!waves.get(j).getEnemies().get(k).isDead()){
+                            playerHit(i);
+                        }
+                        if(playerIsAlive(i)) {
+                            waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+                        }
                     }
                 }
             }
@@ -356,6 +431,29 @@ public abstract class Level extends Scene {
         p2Missiles.removeAll(p2MTR);
         enemyMissiles.removeAll(eMTR);
 
+    }
+
+    protected boolean playerIsAlive(int i){
+        if(i == 0){
+            return !(engine.getP1Lives() <= 0);
+        }else{
+            return !(engine.getP2Lives() <= 0);
+        }
+    }
+
+    protected void playerHit(int i){
+        if(players.get(i).isMortal()){
+            engine.setPlayerHealth(i, -10);
+            if(i == 0){
+                if(engine.getP1Health() == 100){
+                    players.get(i).resetPlayer();
+                }
+            }else{
+                if(engine.getP2Health() == 100){
+                    players.get(i).resetPlayer();
+                }
+            }
+        }
     }
 
     public void enemyFire(int x, int y, int acc) {

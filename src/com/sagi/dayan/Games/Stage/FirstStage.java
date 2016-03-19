@@ -24,14 +24,14 @@ public class FirstStage extends Level{
         switch (currentWave){
             case 0:
                 numOfEnemies = 5;
-                fireDelay = 0.2;
+                fireDelay = 0.1;
                 launchDelay = 0.5;
                 numOfHits = 1;
                 wc = engine.getWaveConfigs().getWaveConfig(WaveConfigs.DEMO);
                 break;
             case 1:
                 numOfEnemies = 5;
-                fireDelay = 5;
+                fireDelay = 0.1;
                 launchDelay = 1;
                 numOfHits = 1;
                 wc = engine.getWaveConfigs().getWaveConfig(WaveConfigs.DEMO);

@@ -14,6 +14,8 @@ public class Player extends AnimatedSprite {
     private int fireDelay;
     private double imortalPulse = 0.2;
     private long lastFired, lastDrawn, created;
+    private int startX, startY;
+    private boolean isGameOver;
 
 
 
@@ -30,6 +32,25 @@ public class Player extends AnimatedSprite {
         setImageDimensions();
         isMortal = false;
         toDraw = true;
+        startX = locX;
+        startY = locY;
+        isGameOver = false;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
+    }
+
+    public void resetPlayer(){
+        locX = startX;
+        locY = startY;
+        isMortal = false;
+        lastDrawn = System.currentTimeMillis();
+        created = lastDrawn;
     }
 
     @Override
@@ -66,6 +87,10 @@ public class Player extends AnimatedSprite {
             locY = 0;
         else if(locY > pHeight - animations.get(currentAnimation).getCurrentFrame().getHeight() - PADDING_BOTTOM){
             locY = pHeight - animations.get(currentAnimation).getCurrentFrame().getHeight() - PADDING_BOTTOM;
+        }
+
+        if(isGameOver){
+            //System.exit(1);
         }
 
 

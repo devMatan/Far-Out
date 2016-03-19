@@ -23,13 +23,14 @@ import java.util.Vector;
 
 
 public class GameEngine {
+    private final int CREDIT_TIME = 10;
     public boolean gameOn , gameOver, isFirstGame;
     private JFrame frame;
     private int pWidth, pHeight, numOfPlayers;	//panel dimensions
     private Random r;
     private Stage stage;
     private Vector<Scene> scenes;
-    private int currentScene;
+    private int currentScene, p1CreditTime, p2CreditTime, creditTickTime = 1;
     public static final int PLAYER_WIDTH = 120, PLAYER_HEIGHT = 120;
     public static final int UP=0,RIGHT=1,DOWN=2, LEFT=3, FIRE=4, SPECIAL=5;
 
@@ -38,7 +39,7 @@ public class GameEngine {
 
     private int p1Lives, p2Lives, p1Health, p2Health, credits, p1Score, p2Score;
 
-
+    private long lastP1CreditTick, lastP2CreditTick;
 
     private Font gameFont;
 
@@ -52,7 +53,6 @@ public class GameEngine {
         this.pHeight = height;
         this.scenes = new Vector<>();
         this.stage = stage;
-//        scenes.add(new Level(width, height, 2)); // Need to be a menu Scene
         scenes.add(new MainMenuScene(width, height, this));
         stage.addKeyListener(scenes.get(currentScene));
         stage.addMouseListener(scenes.get(currentScene));
@@ -71,6 +71,8 @@ public class GameEngine {
         resetPlayerHealth(0);
         resetPlayerHealth(1);
         credits = 3;
+        p1Lives = 1;
+        p2Lives = 1;
     }
 
 
@@ -94,6 +96,8 @@ public class GameEngine {
     }
 
 
+
+
     /**
      * initialize and reset vars and timers to "new game" configuration.
      */
@@ -106,9 +110,14 @@ public class GameEngine {
      * Setup all actors in the game to a new game - reset timer
      */
     private void initGame(){
+    }
 
+    public int getP1CreditTime() {
+        return p1CreditTime;
+    }
 
-
+    public int getP2CreditTime() {
+        return p2CreditTime;
     }
 
     public WaveConfigs getWaveConfigs() {
@@ -135,6 +144,15 @@ public class GameEngine {
      * Update all sprites, including collision handling.
      */
     public void update(){
+        long now = System.currentTimeMillis();
+        if(now - lastP1CreditTick >= creditTickTime * 1000){
+            p1CreditTime--;
+            lastP1CreditTick = now;
+        }
+        if(now - lastP2CreditTick >= creditTickTime * 1000){
+            p2CreditTime--;
+            lastP2CreditTick = now;
+        }
         scenes.get(currentScene).update();
     }
 
@@ -234,9 +252,34 @@ public class GameEngine {
     public void setPlayerHealth(int i, int strike) {
         if (i == 0) {
             p1Health += strike;
+            if(p1Health <= 0){
+                p1Lives--;
+                if(p1Lives > 0)
+                    resetPlayerHealth(i);
+                if(p1Lives <= 0){
+                    p1CreditTime = 10;
+                    lastP1CreditTick = System.currentTimeMillis();
+                }
+            }
         } else {
             p2Health += strike;
+            if(p2Health <= 0){
+                p2Lives--;
+                if(p2Lives > 0)
+                    resetPlayerHealth(i);
+                if(p2Health <= 0){
+                    p2CreditTime = 10;
+                    lastP2CreditTick = System.currentTimeMillis();
+                }
+            }
         }
     }
 
+
+    public void setGameOver(boolean gameOver) {
+        if(gameOver){
+            changeScene(0);
+            this.gameOver = false;
+        }
+    }
 }
