@@ -36,7 +36,7 @@ public class GameEngine {
     private int[] p1Controlles = {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_K};
     private int[] p2Controlles = {KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_SHIFT};
 
-    private int p1Strikes, p2Strikes, p1CurrentStrikes, p2CurentStrikes;
+    private int p1Lives, p2Lives, p1Health, p2Health, credits, p1Score, p2Score;
 
 
 
@@ -68,8 +68,30 @@ public class GameEngine {
         }
         this.waveConfigs = new WaveConfigs();
         startNewGame();
+        resetPlayerHealth(0);
+        resetPlayerHealth(1);
+        credits = 3;
     }
 
+
+    private void resetPlayerHealth(int i){
+        if (i==0){
+            p1Health = 100;
+        }
+        else{
+            p2Health = 100;
+        }
+    }
+    private void resetPlayer(int i){
+        resetPlayerHealth(i);
+
+        if (i==0){
+            p1Lives = 3;
+        }
+        else{
+            p2Lives = 3;
+        }
+    }
 
 
     /**
@@ -171,17 +193,49 @@ public class GameEngine {
         return gameFont;
     }
 
-    public int getP1Strikes() {
-        return p1Strikes;
+    public int getP1Lives() {
+        return p1Lives;
     }
-    public int getP2Strikes() {
-        return p2Strikes;
+    public int getP2Lives() {
+        return p2Lives;
     }
-    public void setPlayerStrikes(int i, int strike) {
+
+    public int getP1Health() {
+        return p1Health;
+    }
+
+    public int getP2Health() {
+        return p2Health;
+    }
+
+    public int getP1Score() {
+        return p1Score;
+    }
+
+    public int getP2Score() {
+        return p2Score;
+    }
+
+    public int getCredits() {return credits;}
+
+
+    public void useCredit(){
+        credits--;
+    }
+
+    public void setScore(int i, int score)
+    {
         if (i == 0) {
-            p1Strikes += strike;
+            p1Score += score;
         } else {
-            p2Strikes += strike;
+            p2Score += score;
+        }
+    }
+    public void setPlayerHealth(int i, int strike) {
+        if (i == 0) {
+            p1Health += strike;
+        } else {
+            p2Health += strike;
         }
     }
 

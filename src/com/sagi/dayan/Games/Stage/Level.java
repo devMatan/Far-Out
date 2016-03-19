@@ -212,8 +212,9 @@ public abstract class Level extends Scene {
 
         bg.drawSprite(g, p);
         Color c = g.getColor();
+        Font f = engine.getGameFont();
+
         if(!isStarted){
-            Font f = engine.getGameFont();
             if(f == null) {
                 f = g.getFont();
             }
@@ -230,7 +231,36 @@ public abstract class Level extends Scene {
             int y = ((stageHeight - metrics.getHeight()) / 2) - metrics.getAscent();
             g.drawString(this.title, x, y);
             g.setColor(c);
+
         }
+
+        //print score
+        f = f.deriveFont(15F);
+        g.setFont(f);
+
+        //print life bar
+        for(int i=0; i<players.size(); i++){
+            g.setColor(Color.WHITE);
+            g.drawString("Player "+ (i+1) +" - Lives: " + ((i == 0) ? engine.getP1Lives() : engine.getP2Lives())+ ", Score: " + ((i == 0) ? engine.getP1Score() : engine.getP2Score()), 15, 35*(i+1));
+
+            g.drawRect(15,35*(i+1)+10,100,10);
+            g.setColor(Color.GREEN);
+
+            if (i==0 && engine.getP1Health()<=30)
+                g.setColor(Color.RED);
+            else if( i==1 && engine.getP2Health()<=30)
+                g.setColor(Color.RED);
+
+            g.fillRect(15,35*(i+1)+10,((i == 0) ? engine.getP1Health() : engine.getP2Health()),10);
+
+        }
+
+
+        //print credits
+        g.setColor(Color.WHITE);
+        g.drawString("Credits: "+ engine.getCredits(), stageWidth/2, 30);
+
+
 
 
         for(int i = 0 ; i < p1Missiles.size() ; i++){
@@ -256,51 +286,69 @@ public abstract class Level extends Scene {
         eMTR = new Vector<>();
         p1MTR = new Vector<>();
         p2MTR = new Vector<>();
+
+        //for each player check collisions
         for (int i = 0; i < players.size(); i++) {
+
+            //player vs. enemy missile
             for (int j = 0; j < enemyMissiles.size(); j++) {
                 if(CollisionUtil.collidesWith(players.get(i),enemyMissiles.get(j))){
-                    //Remove players Life
+                    if(players.get(i).isMortal())
+                        engine.setPlayerHealth(i, -10);
                     eMTR.add(enemyMissiles.get(j));
                     System.out.println("Hit Missile");
                 }
             }
+
+            //player vs. enemy ship
             for (int j = 0; j < waves.size(); j++) {
                 // Ship hits enemy
                 for (int k = 0; k < waves.get(j).getEnemies().size(); k++) {
                     if (CollisionUtil.collidesWith(waves.get(j).getEnemies().get(k), players.get(i))) {
-                        engine.setPlayerStrikes(i, -1);
+                        if(players.get(i).isMortal())
+                            engine.setPlayerHealth(i, -10);
                         waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
-                        System.out.println("PIN");
                     }
                 }
             }
 
+            //player 1 missile vs. enemy
             if(i == 0){
                 for(int m = 0 ; m < p1Missiles.size() ; m++){
                     for (int j = 0; j < waves.size(); j++) {
-                        // Ship hits enemy
                         for (int k = 0; k < waves.get(j).getEnemies().size(); k++) {
                             if (CollisionUtil.collidesWith(waves.get(j).getEnemies().get(k), p1Missiles.get(m))) {
-                                waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+                                waves.get(j).enemyHit(waves.get(j).getEnemies().get(k)); //remove enemy life
+
+                                if (waves.get(j).getEnemies().get(k).isDead()) //if enemy is dead
+                                    engine.setScore(i,10);
                                 p1MTR.add(p1Missiles.get(m));
                             }
                         }
                     }
                 }
-            }else{
+
+            }
+
+            //player 1 missile vs. enemy
+            else {
                 for(int m = 0 ; m < p2Missiles.size() ; m++){
                     for (int j = 0; j < waves.size(); j++) {
-                        // Ship hits enemy
                         for (int k = 0; k < waves.get(j).getEnemies().size(); k++) {
                             if (CollisionUtil.collidesWith(waves.get(j).getEnemies().get(k), p2Missiles.get(m))) {
-                                waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
+
+                                waves.get(j).enemyHit(waves.get(j).getEnemies().get(k)); //remove enemy life
+                                if (waves.get(j).getEnemies().get(k).isDead()) //if enemy is dead
+                                    engine.setScore(i,10);
                                 p2MTR.add(p2Missiles.get(m));
+
                             }
                         }
                     }
                 }
             }
         }
+
 
 
 

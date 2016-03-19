@@ -67,8 +67,8 @@ public class EnemyShip extends AnimatedSprite {
         }
         System.out.println("GOT HIT " + hitsToDestroy);
     }
-    public int getHitToDestroy() {
-        return hitsToDestroy;
+    public boolean isDead() {
+        return hitsToDestroy == 0;
     }
 
     public boolean isDone(){
