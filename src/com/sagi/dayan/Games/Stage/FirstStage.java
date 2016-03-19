@@ -27,14 +27,14 @@ public class FirstStage extends Level{
                 fireDelay = 0.1;
                 launchDelay = 0.5;
                 numOfHits = 1;
-                wc = engine.getWaveConfigs().getWaveConfig(WaveConfigs.DEMO);
+                wc = engine.getWaveConfigs().getWaveConfig(6);
                 break;
             case 1:
                 numOfEnemies = 5;
                 fireDelay = 0.1;
                 launchDelay = 1;
                 numOfHits = 1;
-                wc = engine.getWaveConfigs().getWaveConfig(WaveConfigs.DEMO);
+                wc = engine.getWaveConfigs().getWaveConfig(3);
                 break;
             default:
                 wc = engine.getWaveConfigs().getWaveConfig(WaveConfigs.DEMO);

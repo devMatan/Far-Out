@@ -29,8 +29,8 @@ public class GameEngine {
     private int pWidth, pHeight, numOfPlayers;	//panel dimensions
     private Random r;
     private Stage stage;
-    private Vector<Scene> scenes;
-    private int currentScene, p1CreditTime, p2CreditTime, creditTickTime = 1;
+    private Scene scene;
+    private int p1CreditTime, p2CreditTime, creditTickTime = 1;
     public static final int PLAYER_WIDTH = 120, PLAYER_HEIGHT = 120;
     public static final int UP=0,RIGHT=1,DOWN=2, LEFT=3, FIRE=4, SPECIAL=5;
 
@@ -44,18 +44,16 @@ public class GameEngine {
     private Font gameFont;
 
     private WaveConfigs waveConfigs;
+    private int currentLevel;
 
     public GameEngine(int width, int height, Stage stage){
-        this.currentScene = 0;
         this.isFirstGame = true;
         this.gameOver = true;
         this.pWidth = width;
         this.pHeight = height;
-        this.scenes = new Vector<>();
         this.stage = stage;
-        scenes.add(new MainMenuScene(width, height, this));
-        stage.addKeyListener(scenes.get(currentScene));
-        stage.addMouseListener(scenes.get(currentScene));
+        currentLevel = -1;
+        goToMenu();
         r = new Random();
         try{
             gameFont = Font.createFont(Font.TRUETYPE_FONT,Utils.getFontStream("transformers.ttf"));
@@ -68,11 +66,7 @@ public class GameEngine {
         }
         this.waveConfigs = new WaveConfigs();
         startNewGame();
-        resetPlayerHealth(0);
-        resetPlayerHealth(1);
-        credits = 3;
-        p1Lives = 1;
-        p2Lives = 1;
+
     }
 
 
@@ -103,6 +97,7 @@ public class GameEngine {
      */
     private void startNewGame(){
         this.gameOn = true;
+        this.currentLevel = -1;
         initGame();
     }
 
@@ -110,6 +105,11 @@ public class GameEngine {
      * Setup all actors in the game to a new game - reset timer
      */
     private void initGame(){
+        resetPlayerHealth(0);
+        resetPlayerHealth(1);
+        credits = 3;
+        p1Lives = 1;
+        p2Lives = 1;
     }
 
     public int getP1CreditTime() {
@@ -153,51 +153,49 @@ public class GameEngine {
             p2CreditTime--;
             lastP2CreditTick = now;
         }
-        scenes.get(currentScene).update();
+        scene.update();
     }
 
     public void render(JPanel p) {
-        scenes.get(currentScene).render(p);
+        scene.render(p);
     }
 
     public BufferedImage getScene() {
-        return scenes.get(currentScene).getSceneImage();
-    }
-
-    private void changeScene(int index) {
-        if (index >= scenes.size()){
-            throw new IllegalArgumentException("Invalid Index. scenes size: "+scenes.size());
-        }
-        stage.removeKeyListener(scenes.get(currentScene));
-        stage.removeMouseListener(scenes.get(currentScene));
-        currentScene = index;
-        stage.addKeyListener(scenes.get(currentScene));
-        stage.addMouseListener(scenes.get(currentScene));
+        return scene.getSceneImage();
     }
 
     public void startGame(int numOfPlayers){
         this.numOfPlayers = numOfPlayers;
-        scenes.add(new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20}));
-        changeScene(currentScene+1);
+        startNewGame();
+        changeLevel();
+    }
+
+    public void changeLevel(){
+        currentLevel++;
+        stage.removeMouseListener(scene);
+        stage.removeKeyListener(scene);
+        switch (currentLevel){
+            case 0:
+                scene = new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20});
+                break;
+            case 1:
+                scene = new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.1 =-", new int[]{5, 20});
+                break;
+
+        }
+        stage.addKeyListener(scene);
+        stage.addMouseListener(scene);
     }
 
 
     public void goToSettings() {
-        scenes.add(new SettingsMenuScene(pWidth, pHeight, this));
-        changeScene(currentScene+1);
+        stage.removeMouseListener(scene);
+        stage.removeKeyListener(scene);
+        scene = new SettingsMenuScene(pWidth, pHeight, this);
+        stage.addKeyListener(scene);
+        stage.addMouseListener(scene);
     }
 
-    public void goToMainMenu() {
-
-        changeScene(0);
-        for(int i = scenes.size() -1  ; i > 0 ; i--){
-            scenes.remove(i);
-        }
-    }
-
-    public int getScenesSize(){
-        return scenes.size();
-    }
 
     public int[] getP1Controlles(){
         return p1Controlles;
@@ -275,11 +273,20 @@ public class GameEngine {
         }
     }
 
+    public void goToMenu(){
+        stage.removeMouseListener(scene);
+        stage.removeKeyListener(scene);
+        scene = new MainMenuScene(pWidth, pHeight, this);
+        stage.addKeyListener(scene);
+        stage.addMouseListener(scene);
+    }
+
 
     public void setGameOver(boolean gameOver) {
         if(gameOver){
-            changeScene(0);
-            this.gameOver = false;
+            goToMenu();
+            this.gameOver = true;
         }
+
     }
 }

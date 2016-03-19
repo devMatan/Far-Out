@@ -51,7 +51,7 @@ public class SettingsMenuScene extends Scene {
         switch (keyEvent.getKeyCode()){
             case KeyEvent.VK_ESCAPE:
                 Utils.playSound("menuItem.wav");
-                engine.goToMainMenu();
+                engine.goToMenu();
                 break;
         }
     }
