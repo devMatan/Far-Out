@@ -6,8 +6,8 @@ package com.sagi.dayan.Games.Elements;
 public class Missile extends AnimatedSprite {
 
 
-    public Missile(int x, int y, int acc, String imgName, int numOfFrames) {
-        super(x, y, 0, 0, acc, imgName, 0, 15, 15, numOfFrames);
+    public Missile(int x, int y, int w, int h, int acc, String imgName, int numOfFrames) {
+        super(x, y, w, h, acc, imgName, 0, 15, 15, numOfFrames);
 
     }
 

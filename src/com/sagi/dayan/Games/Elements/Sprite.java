@@ -264,8 +264,11 @@ public abstract class Sprite {
     }
 
     public boolean isOutOfScreen() {
-        if (this.getLocX() + this.sWidth < 0 || this.getLocX() - this.sWidth > pHeight || this.getLocY() + this.sHeight < 0 || this.getLocY() - sHeight > pHeight) {
-            return true;
+        if (this.getLocX() + sWidth < 0
+        		|| this.getLocX() > pWidth
+        		|| this.getLocY() +sHeight < 0
+        		|| this.getLocY() >pHeight){
+    	return true;
         } else {
             return false;
         }

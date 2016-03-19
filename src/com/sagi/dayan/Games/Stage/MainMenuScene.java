@@ -24,7 +24,6 @@ public class MainMenuScene extends Scene {
     private MenuBoxSprite menuBox;
     private int menuItem;
 
-
     private final int MAX_ITEM_INDEX = 3, X_AXIS=560, ITEM_EXIT = 3, ITEM_SETTINGS = 2, ITEM_2P = 1, ITEM_1P = 0;
     private int[] axis = {370, 480, 590, 700};
 
@@ -61,6 +60,16 @@ public class MainMenuScene extends Scene {
         g.setFont(f);
         g.drawString("Player1 record: " +engine.p1HighScore, 700, 50);
         g.drawString("Player2 record: " +engine.p2HighScore, 700, 100);
+        try {
+
+        if(!AudioPlayer.player.isAlive()){
+        	System.out.println("Start again");
+            AudioPlayer.player.start(new AudioStream(Utils.getSoundResourceAsStream("intro_LowQuality.wav")));
+
+        }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
         
         
 
