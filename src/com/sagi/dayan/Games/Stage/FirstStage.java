@@ -10,7 +10,7 @@ import com.sagi.dayan.Games.Utils.WaveConfigs;
  */
 public class FirstStage extends Level{
 	
-	protected final int NUM_OF_WAVES = 2;
+	protected final int NUM_OF_WAVES = 3;
 
     public FirstStage(int width, int height, int numOfPlayers, GameEngine engine, String stageTitle, int[] waveDelay) {
         super(width, height, numOfPlayers, engine, stageTitle, waveDelay);

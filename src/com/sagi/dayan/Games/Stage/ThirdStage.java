@@ -40,7 +40,7 @@ public class ThirdStage extends Level{
                 wc = engine.getWaveConfigs().getWaveConfig(2);
                 break;
             case 2:
-                numOfEnemies = 25;
+                numOfEnemies = 10;
                 fireDelay = 0.5;
                 launchDelay = 1.4;
                 numOfHits = 2;

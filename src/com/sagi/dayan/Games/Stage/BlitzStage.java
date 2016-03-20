@@ -26,58 +26,58 @@ public class BlitzStage extends Level{
         double launchDelay = 0.5, fireDelay = 5;
         switch (currentWave){
             case 0:
-                numOfEnemies = 35;
+                numOfEnemies = 15;
                 fireDelay = 0.5;
                 launchDelay = 0.5;
                 numOfHits = 1;
                 wc = engine.getWaveConfigs().getWaveConfig(0);
                 break;
             case 1:
-                numOfEnemies = 35;
+                numOfEnemies = 5;
                 fireDelay = 0.3;
                 launchDelay = 0.5;
                 numOfHits = 10;
                 wc = engine.getWaveConfigs().getWaveConfig(1);
                 break;
             case 2:
-                numOfEnemies = 45;
+                numOfEnemies = 5;
                 fireDelay = 0.3;
-                launchDelay = 0.5;
+                launchDelay = 1;
                 numOfHits = 10;
                 wc = engine.getWaveConfigs().getWaveConfig(2);
                 break;
             case 3:
-                numOfEnemies = 45;
+                numOfEnemies = 15;
                 fireDelay = 0.2;
-                launchDelay = 0.4;
+                launchDelay = 1;
                 numOfHits = 10;
                 wc = engine.getWaveConfigs().getWaveConfig(3);
                 break;
             case 4:
-                numOfEnemies = 55;
-                fireDelay = 0.2;
-                launchDelay = 0.4;
-                numOfHits = 10;
+                numOfEnemies = 20;
+                fireDelay = 0.1;
+                launchDelay = 1.5;
+                numOfHits = 5;
                 wc = engine.getWaveConfigs().getWaveConfig(4);
                 break;
             case 5:
-                numOfEnemies = 55;
+                numOfEnemies = 20;
                 fireDelay = 0.2;
-                launchDelay = 0.4;
+                launchDelay = 1;
                 numOfHits = 10;
                 wc = engine.getWaveConfigs().getWaveConfig(5);
                 break;
             case 6:
-                numOfEnemies = 65;
+                numOfEnemies = 20;
                 fireDelay = 0.2;
-                launchDelay = 0.4;
+                launchDelay = 0.5;
                 numOfHits = 10;
                 wc = engine.getWaveConfigs().getWaveConfig(6);
                 break;
             case 7:
-                numOfEnemies = 65;
+                numOfEnemies = 40;
                 fireDelay = 0.2;
-                launchDelay = 0.4;
+                launchDelay = 2;
                 numOfHits = 10;
                 wc = engine.getWaveConfigs().getWaveConfig(7);
                 break;

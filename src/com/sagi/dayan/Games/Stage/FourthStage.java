@@ -33,23 +33,23 @@ public class FourthStage extends Level{
                 wc = engine.getWaveConfigs().getWaveConfig(3);
                 break;
             case 1:
-                numOfEnemies = 15;
+                numOfEnemies = 10;
                 fireDelay = 0.3;
-                launchDelay = 0.8;
+                launchDelay = 1;
                 numOfHits = 1;
                 wc = engine.getWaveConfigs().getWaveConfig(6);
                 break;
             case 2:
                 numOfEnemies = 10;
                 fireDelay = 0.3;
-                launchDelay = 0.7;
+                launchDelay = 1.3;
                 numOfHits = 1;
                 wc = engine.getWaveConfigs().getWaveConfig(0);
                 break;
             case 3:
                 numOfEnemies = 5;
                 fireDelay = 0.2;
-                launchDelay = 0.7;
+                launchDelay = 1.5;
                 numOfHits = 5;
                 wc = engine.getWaveConfigs().getWaveConfig(7);
                 break;
