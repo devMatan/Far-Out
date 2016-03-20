@@ -170,8 +170,8 @@ public abstract class Level extends Scene {
 			System.out.println("Done");
 			engine.changeLevel();
 		}
-		
-		
+
+
 		for(int i =0; i<blasts.size();i++){
 			if (blasts.get(i).isDone()){
 				System.out.println("removing blast");
@@ -217,11 +217,13 @@ public abstract class Level extends Scene {
 			players.get(0).setvDirection(0);
 		}
 		if(keys.get(engine.getP1Controlles()[GameEngine.FIRE]) ){
-			if(players.get(0).isAbleToFire() && !players.get(0).isGameOver()){
-				p1Missiles.add(new Missile(players.get(0).getCenterX() - 15, (int)players.get(0).getLocY(),getStageWidth(),getStageHeight(), players.get(0).getAcceleration() + 3, "P1Laser.png", 4));
+			if(players.get(0).isAbleToFire() && !players.get(0).isGameOver()) {
+				p1Missiles.add(new Missile(players.get(0).getCenterX() - 15, (int) players.get(0).getLocY(), getStageWidth(), getStageHeight(), players.get(0).getAcceleration() + 3, "P1Laser.png", 4));
 				players.get(0).updateFireTime();
 			}
-			if(engine.getP1Health() <= 0 && engine.getCredits() > 0) {
+		}
+		if(keys.get(engine.getP1Controlles()[GameEngine.USE_CREDIT]) && engine.getP1Health() <= 0 ){
+			if(engine.getCredits() > 0) {
 				engine.revivePlayer(0);
 				players.get(0).resetPlayer();
 
@@ -255,7 +257,9 @@ public abstract class Level extends Scene {
 					p2Missiles.add(new Missile(players.get(1).getCenterX() - 15, (int)players.get(1).getLocY(),getStageWidth(),getStageHeight(),players.get(1).getAcceleration() + 3, "P1Laser.png", 4));
 					players.get(1).updateFireTime();
 				}
-				if(engine.getP2Health() <= 0 && engine.getCredits() > 0) {
+			}
+			if(keys.get(engine.getP2Controlles()[GameEngine.USE_CREDIT]) && engine.getP2Health() <= 0 ){
+				if(engine.getCredits() > 0) {
 					engine.revivePlayer(1);
 					players.get(1).resetPlayer();
 
@@ -295,7 +299,7 @@ public abstract class Level extends Scene {
 
 
 		if (isGameOver())
-		{	
+		{
 			try {
 				System.in.read();
 			} catch (IOException e) {
@@ -371,7 +375,7 @@ public abstract class Level extends Scene {
 		for(int i = 0 ; i < waves.size() ; i++){
 			waves.get(i).render(g,p);
 		}
-		
+
 		for(int i =0; i<blasts.size();i++){
 			blasts.get(i).drawSprite(g, p);
 		}
@@ -453,7 +457,7 @@ public abstract class Level extends Scene {
 						eMTR.add(enemyMissiles.get(j));
 					}else{
 						blasts.add(new Blast((int)players.get(i).getLocX(),(int)players.get(i).getLocY(),"explosion.png",15));
-					
+
 					}
 				}
 			}
@@ -470,7 +474,7 @@ public abstract class Level extends Scene {
 							waves.get(j).enemyHit(waves.get(j).getEnemies().get(k));
 						}else{
 							blasts.add(new Blast((int)players.get(i).getLocX(),(int)players.get(i).getLocY(),"explosion.png",15));
-						
+
 						}
 					}
 				}
