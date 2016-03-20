@@ -265,7 +265,6 @@ public abstract class Level extends Scene {
 
 				}
 			}
-
 		}
 	}
 
