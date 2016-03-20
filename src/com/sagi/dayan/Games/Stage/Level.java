@@ -257,11 +257,10 @@ public abstract class Level extends Scene {
 				}
 				if(engine.getP2Health() <= 0 && engine.getCredits() > 0) {
 					engine.revivePlayer(1);
-					players.get(0).resetPlayer();
+					players.get(1).resetPlayer();
 
 				}
 			}
-
 		}
 	}
 
