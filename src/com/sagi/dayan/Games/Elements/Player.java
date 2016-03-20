@@ -1,7 +1,8 @@
 package com.sagi.dayan.Games.Elements;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+
+import javax.swing.JPanel;
 
 /**
  * Created by sagi on 2/20/16.
@@ -14,6 +15,8 @@ public class Player extends AnimatedSprite {
     private int fireDelay;
     private double imortalPulse = 0.2;
     private long lastFired, lastDrawn, created;
+    private int startX, startY;
+    private boolean isGameOver;
 
 
 
@@ -30,8 +33,27 @@ public class Player extends AnimatedSprite {
         setImageDimensions();
         isMortal = false;
         toDraw = true;
+        startX = locX;
+        startY = locY;
+        isGameOver = false;
     }
 
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
+    }
+
+    public void resetPlayer(){
+        locX = startX;
+        locY = startY;
+        isMortal = false;
+        lastDrawn = System.currentTimeMillis();
+        created = lastDrawn;
+    }
+    
     @Override
     protected void initFirstAnimation(String spriteSheet, int numOfFirstFrames) {
         if(imagePrefix == null)
@@ -66,6 +88,10 @@ public class Player extends AnimatedSprite {
             locY = 0;
         else if(locY > pHeight - animations.get(currentAnimation).getCurrentFrame().getHeight() - PADDING_BOTTOM){
             locY = pHeight - animations.get(currentAnimation).getCurrentFrame().getHeight() - PADDING_BOTTOM;
+        }
+
+        if(isGameOver){
+            //System.exit(1);
         }
 
 

@@ -4,14 +4,13 @@ package com.sagi.dayan.Games.Stage;
  * Created by sagi on 2/8/16.
  */
 
-import com.sagi.dayan.Games.Elements.*;
-import com.sagi.dayan.Games.Engine.GameEngine;
-
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JPanel;
+
+import com.sagi.dayan.Games.Engine.GameEngine;
 
 public abstract class Scene extends MouseAdapter implements KeyListener{
 

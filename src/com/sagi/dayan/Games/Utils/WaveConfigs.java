@@ -26,17 +26,17 @@ public class WaveConfigs  {
 		//top right to middle top
 		configs.add(new WaveConfig(new int[]{90,90,120, 120, 150, 150, 270} , 0.5, 8,900 , -30));
 		
-		//right buttom to middle buttom
-        configs.add(new WaveConfig(new int[]{270,270,300, 300, 330, 330, 90} , 0.5, 8,100 , 0));
+		//right buttom to middle bottom
+        configs.add(new WaveConfig(new int[]{270,270,300, 300, 330, 330, 90} , 0.5, 8,100 , 1000));
 		
-		//left buttom to middle buttom
-        configs.add(new WaveConfig(new int[]{270,270,240, 240, 210, 210, 90} , 0.5, 8,900 , 0));
+		//left buttom to middle bottom
+        configs.add(new WaveConfig(new int[]{270,270,240, 240, 210, 210, 90} , 0.5, 8,900 , 1000));
 		
 		//middle right to middle right
-		configs.add(new WaveConfig(new int[]{180,180,180,90, 90, 0} , 0.5, 8,1010 , 400));
+		configs.add(new WaveConfig(new int[]{180,180,180,180,180,90, 90, 0} , 0.5, 8,999 , 400));
 		
 		//middle left to middle left
-		configs.add(new WaveConfig(new int[]{0,0,0,90, 90, 180} , 0.5, 8,-30 , 400));
+		configs.add(new WaveConfig(new int[]{0,0,0,0,0,90, 90, 180} , 0.5, 8,-10 , 400));
 
     }
 

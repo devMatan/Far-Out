@@ -1,16 +1,18 @@
 package com.sagi.dayan.Games.Stage;
 
-import com.sagi.dayan.Games.Engine.GameEngine;
-import com.sagi.dayan.Games.Utils.Utils;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+
+import com.sagi.dayan.Games.Engine.GameEngine;
+import com.sagi.dayan.Games.Utils.Utils;
+//import sun.audio.AudioPlayer;
+//import sun.audio.AudioStream;
 
 /**
  * Created by sagi on 2/27/16.
@@ -51,7 +53,7 @@ public class SettingsMenuScene extends Scene {
         switch (keyEvent.getKeyCode()){
             case KeyEvent.VK_ESCAPE:
                 Utils.playSound("menuItem.wav");
-                engine.goToMainMenu();
+                engine.goToMenu();
                 break;
         }
     }

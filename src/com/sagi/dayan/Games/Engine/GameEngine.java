@@ -4,58 +4,60 @@ package com.sagi.dayan.Games.Engine;
  * Created by sagi on 2/8/16.
  */
 
-import com.sagi.dayan.Games.Stage.*;
-import com.sagi.dayan.Games.Utils.Utils;
-import com.sagi.dayan.Games.Utils.WaveConfigs;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
-import java.util.Vector;
 
-/**
- * Created by sagi on 12/18/15.
- */
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import com.sagi.dayan.Games.Stage.*;
+import com.sagi.dayan.Games.Stage.MainMenuScene;
+import com.sagi.dayan.Games.Stage.Scene;
+import com.sagi.dayan.Games.Stage.SettingsMenuScene;
+import com.sagi.dayan.Games.Stage.Stage;
+import com.sagi.dayan.Games.Utils.Utils;
+import com.sagi.dayan.Games.Utils.WaveConfigs;
 
 
 
 public class GameEngine {
+    private final int CREDIT_TIME = 10;
     public boolean gameOn , gameOver, isFirstGame;
     private JFrame frame;
     private int pWidth, pHeight, numOfPlayers;	//panel dimensions
     private Random r;
     private Stage stage;
-    private Vector<Scene> scenes;
-    private int currentScene;
+    private Scene scene;
+    private int p1CreditTime, p2CreditTime, creditTickTime = 1;
     public static final int PLAYER_WIDTH = 120, PLAYER_HEIGHT = 120;
-    public static final int UP=0,RIGHT=1,DOWN=2, LEFT=3, FIRE=4, SPECIAL=5;
+    public static final int UP=0,RIGHT=1,DOWN=2, LEFT=3, FIRE=4, USE_CREDIT=5;
+    public int p1HighScore, p2HighScore;
 
-    private int[] p1Controlles = {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_K};
-    private int[] p2Controlles = {KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_SHIFT};
+    private int[] p1Controlles = {KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_K, KeyEvent.VK_J};
+    private int[] p2Controlles = {KeyEvent.VK_W, KeyEvent.VK_D, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_Q, KeyEvent.VK_Z};
 
     private int p1Lives, p2Lives, p1Health, p2Health, credits, p1Score, p2Score;
 
-
+    private long lastP1CreditTick, lastP2CreditTick;
 
     private Font gameFont;
 
     private WaveConfigs waveConfigs;
+    private int currentLevel;
 
     public GameEngine(int width, int height, Stage stage){
-        this.currentScene = 0;
+    	p1HighScore =  p2HighScore = 0;
         this.isFirstGame = true;
         this.gameOver = true;
         this.pWidth = width;
         this.pHeight = height;
-        this.scenes = new Vector<>();
         this.stage = stage;
-//        scenes.add(new Level(width, height, 2)); // Need to be a menu Scene
-        scenes.add(new MainMenuScene(width, height, this));
-        stage.addKeyListener(scenes.get(currentScene));
-        stage.addMouseListener(scenes.get(currentScene));
+        currentLevel = -1;
+        goToMenu();
         r = new Random();
         try{
             gameFont = Font.createFont(Font.TRUETYPE_FONT,Utils.getFontStream("transformers.ttf"));
@@ -68,9 +70,7 @@ public class GameEngine {
         }
         this.waveConfigs = new WaveConfigs();
         startNewGame();
-        resetPlayerHealth(0);
-        resetPlayerHealth(1);
-        credits = 3;
+
     }
 
 
@@ -82,16 +82,9 @@ public class GameEngine {
             p2Health = 100;
         }
     }
-    private void resetPlayer(int i){
-        resetPlayerHealth(i);
+ 
 
-        if (i==0){
-            p1Lives = 3;
-        }
-        else{
-            p2Lives = 3;
-        }
-    }
+
 
 
     /**
@@ -99,6 +92,7 @@ public class GameEngine {
      */
     private void startNewGame(){
         this.gameOn = true;
+        this.currentLevel = -1;
         initGame();
     }
 
@@ -106,9 +100,20 @@ public class GameEngine {
      * Setup all actors in the game to a new game - reset timer
      */
     private void initGame(){
+        resetPlayerHealth(0);
+        resetPlayerHealth(1);
+        p1Score = p2Score = 0;
+        credits = 3;
+        p1Lives = 1;
+        p2Lives = 1;
+    }
 
+    public int getP1CreditTime() {
+        return p1CreditTime;
+    }
 
-
+    public int getP2CreditTime() {
+        return p2CreditTime;
     }
 
     public WaveConfigs getWaveConfigs() {
@@ -135,51 +140,65 @@ public class GameEngine {
      * Update all sprites, including collision handling.
      */
     public void update(){
-        scenes.get(currentScene).update();
+        long now = System.currentTimeMillis();
+        if(now - lastP1CreditTick >= creditTickTime * 1000){
+            p1CreditTime--;
+            lastP1CreditTick = now;
+        }
+        if(now - lastP2CreditTick >= creditTickTime * 1000){
+            p2CreditTime--;
+            lastP2CreditTick = now;
+        }
+        scene.update();
     }
 
     public void render(JPanel p) {
-        scenes.get(currentScene).render(p);
+        scene.render(p);
     }
 
     public BufferedImage getScene() {
-        return scenes.get(currentScene).getSceneImage();
-    }
-
-    private void changeScene(int index) {
-        if (index >= scenes.size()){
-            throw new IllegalArgumentException("Invalid Index. scenes size: "+scenes.size());
-        }
-        stage.removeKeyListener(scenes.get(currentScene));
-        stage.removeMouseListener(scenes.get(currentScene));
-        currentScene = index;
-        stage.addKeyListener(scenes.get(currentScene));
-        stage.addMouseListener(scenes.get(currentScene));
+        return scene.getSceneImage();
     }
 
     public void startGame(int numOfPlayers){
         this.numOfPlayers = numOfPlayers;
-        scenes.add(new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 20}));
-        changeScene(currentScene+1);
+        startNewGame();
+        changeLevel();
+    }
+
+    public void changeLevel(){
+    	System.out.println("current level: "+currentLevel);
+        currentLevel++;
+        stage.removeMouseListener(scene);
+        stage.removeKeyListener(scene);
+        switch (currentLevel){
+            case 0:
+                scene = new FirstStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 1.0 =-", new int[]{5, 1,1,1});
+                break;
+            case 1:
+                scene = new SecondStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 2.0 =-", new int[]{5, 5,5,5});
+                break;
+            case 2:
+                scene = new ThirdStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 3.0 =-", new int[]{5, 0,0,8});
+                break;
+            case 3:
+                scene = new FourthStage(pWidth, pHeight, numOfPlayers, this, "-= STAGE 4.0 =-", new int[]{5, 0,0,8});
+                break;
+
+        }
+        stage.addKeyListener(scene);
+        stage.addMouseListener(scene);
     }
 
 
     public void goToSettings() {
-        scenes.add(new SettingsMenuScene(pWidth, pHeight, this));
-        changeScene(currentScene+1);
+        stage.removeMouseListener(scene);
+        stage.removeKeyListener(scene);
+        scene = new SettingsMenuScene(pWidth, pHeight, this);
+        stage.addKeyListener(scene);
+        stage.addMouseListener(scene);
     }
 
-    public void goToMainMenu() {
-
-        changeScene(0);
-        for(int i = scenes.size() -1  ; i > 0 ; i--){
-            scenes.remove(i);
-        }
-    }
-
-    public int getScenesSize(){
-        return scenes.size();
-    }
 
     public int[] getP1Controlles(){
         return p1Controlles;
@@ -222,6 +241,22 @@ public class GameEngine {
     public void useCredit(){
         credits--;
     }
+    
+    public void revivePlayer(int i)
+    {
+		useCredit();
+
+    	if(i==0){
+    		p1Health=100;
+			p1Lives =3;
+    	}
+    	else{
+    		p2Health=100;
+			p2Lives =3;
+    	}
+
+    }
+    
 
     public void setScore(int i, int score)
     {
@@ -234,9 +269,65 @@ public class GameEngine {
     public void setPlayerHealth(int i, int strike) {
         if (i == 0) {
             p1Health += strike;
+            if(p1Health <= 0){
+                p1Lives--;
+                if(p1Lives > 0)
+                    resetPlayerHealth(i);
+                if(p1Lives <= 0){
+                	p1CreditTime = 10;
+                    lastP1CreditTick = System.currentTimeMillis();
+                }
+            }
         } else {
             p2Health += strike;
+            if(p2Health <= 0){
+                p2Lives--;
+                if(p2Lives > 0)
+                    resetPlayerHealth(i);
+                if(p2Health <= 0){
+                    p2CreditTime = 10;
+                    lastP2CreditTick = System.currentTimeMillis();
+                }
+            }
         }
     }
 
+    public void goToMenu(){
+        stage.removeMouseListener(scene);
+        stage.removeKeyListener(scene);
+        scene = new MainMenuScene(pWidth, pHeight, this);
+        stage.addKeyListener(scene);
+        stage.addMouseListener(scene);
+    }
+
+
+    public void setGameOver(boolean gameOver) {
+        if(gameOver){
+            goToMenu();
+            this.gameOver = true;
+        }
+
+    }
+
+
+	public int getP1HighScore() {
+		return p1HighScore;
+	}
+
+
+	public void setP1HighScore(int p1HighScore) {
+		this.p1HighScore = p1HighScore;
+	}
+
+
+	public int getP2HighScore() {
+		return p2HighScore;
+	}
+
+
+	public void setP2HighScore(int p2HighScore) {
+		this.p2HighScore = p2HighScore;
+	}
+    
+    
 }

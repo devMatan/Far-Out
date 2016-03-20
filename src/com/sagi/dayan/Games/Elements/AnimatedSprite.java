@@ -1,14 +1,13 @@
 package com.sagi.dayan.Games.Elements;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageProducer;
 import java.io.IOException;
 import java.util.Vector;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
 /**
  * Created by sagi on 2/10/16.
@@ -16,8 +15,6 @@ import java.util.Vector;
 public abstract class AnimatedSprite extends Sprite {
     protected Vector<Animation> animations;
     protected int currentAnimation;
-
-
 
 
     public AnimatedSprite(int x, int y, int w, int h, int acc, String imgName, double angle, int sWidth, int sHeight, int numOfFirstFrames) {
@@ -48,6 +45,10 @@ public abstract class AnimatedSprite extends Sprite {
     protected void drawScreenLoopFix(Graphics g, JPanel p) {
         bImage = animations.get(currentAnimation).getCurrentFrame();
         super.drawScreenLoopFix(g,p);
+    }
+    
+    public int getFrameNum(){
+    	return animations.get(currentAnimation).getFrameIndex();
     }
 
     public void setCurrentAnimation(int animation){

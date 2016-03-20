@@ -1,16 +1,20 @@
 package com.sagi.dayan.Games.Stage;
 
-import com.sagi.dayan.Games.Elements.MenuBoxSprite;
-import com.sagi.dayan.Games.Engine.GameEngine;
-import com.sagi.dayan.Games.Utils.Utils;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.swing.JPanel;
+
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import com.sagi.dayan.Games.Elements.MenuBoxSprite;
+import com.sagi.dayan.Games.Engine.GameEngine;
+import com.sagi.dayan.Games.Utils.Utils;
 
 /**
  * Created by sagi on 2/24/16.
@@ -19,7 +23,6 @@ public class MainMenuScene extends Scene {
 
     private MenuBoxSprite menuBox;
     private int menuItem;
-
 
     private final int MAX_ITEM_INDEX = 3, X_AXIS=560, ITEM_EXIT = 3, ITEM_SETTINGS = 2, ITEM_2P = 1, ITEM_1P = 0;
     private int[] axis = {370, 480, 590, 700};
@@ -51,6 +54,25 @@ public class MainMenuScene extends Scene {
         Graphics g = sceneImage.getGraphics();
         g.drawImage(menuBox.getbImage(), 0, 0, p);
         menuBox.drawSprite(g, p);
+        
+        Font f = engine.getGameFont();
+        f = f.deriveFont(25F);
+        g.setFont(f);
+        g.drawString("Player1 record: " +engine.p1HighScore, 700, 50);
+        g.drawString("Player2 record: " +engine.p2HighScore, 700, 100);
+        try {
+
+        if(!AudioPlayer.player.isAlive()){
+        	System.out.println("Start again");
+            AudioPlayer.player.start(new AudioStream(Utils.getSoundResourceAsStream("intro_LowQuality.wav")));
+
+        }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        
+
     }
 
     @Override

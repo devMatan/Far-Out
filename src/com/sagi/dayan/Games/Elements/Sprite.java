@@ -1,13 +1,16 @@
 package com.sagi.dayan.Games.Elements;
 
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Vector;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
 
 public abstract class Sprite {
@@ -261,8 +264,11 @@ public abstract class Sprite {
     }
 
     public boolean isOutOfScreen() {
-        if (this.getLocX() + this.sWidth < 0 || this.getLocX() - this.sWidth > pHeight || this.getLocY() + this.sHeight < 0 || this.getLocY() - sHeight > pHeight) {
-            return true;
+        if (this.getLocX() + sWidth < 0
+        		|| this.getLocX() > pWidth
+        		|| this.getLocY() +sHeight < 0
+        		|| this.getLocY() >pHeight){
+    	return true;
         } else {
             return false;
         }
